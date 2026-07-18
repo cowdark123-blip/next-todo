@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Task, TodoList, SubTask } from '@/types';
+import { Task, TodoList, Step } from '@/types';
 
 interface TaskState {
   lists: TodoList[];
@@ -9,6 +9,7 @@ interface TaskState {
   // List Actions
   addList: (name: string, icon?: string, color?: string) => void;
   updateList: (id: string, updates: Partial<TodoList>) => void;
+  updateListSettings: (id: string, settings: { background?: string, bgOpacity?: number, icon?: string }) => void;
   deleteList: (id: string) => void;
   
   // Task Actions
@@ -18,11 +19,12 @@ interface TaskState {
   toggleTaskCompletion: (id: string) => void;
   toggleTaskImportance: (id: string) => void;
   reorderTasks: (activeId: string, overId: string) => void;
+  moveTask: (taskId: string, newListId: string) => void;
   
-  // SubTask Actions
-  addSubTask: (taskId: string, title: string) => void;
-  toggleSubTask: (taskId: string, subTaskId: string) => void;
-  deleteSubTask: (taskId: string, subTaskId: string) => void;
+  // Steps Actions
+  addStep: (taskId: string, title: string) => void;
+  toggleStep: (taskId: string, stepId: string) => void;
+  deleteStep: (taskId: string, stepId: string) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -43,6 +45,7 @@ export const useTaskStore = create<TaskState>()(
             name,
             icon,
             color,
+            bgOpacity: 0.5,
             createdAt: new Date().toISOString()
           }
         ]
@@ -54,9 +57,15 @@ export const useTaskStore = create<TaskState>()(
         )
       })),
 
+      updateListSettings: (id, settings) => set((state) => ({
+        lists: state.lists.map((list) =>
+          list.id === id ? { ...list, ...settings } : list
+        )
+      })),
+
       deleteList: (id) => set((state) => ({
         lists: state.lists.filter((list) => list.id !== id),
-        tasks: state.tasks.filter((task) => task.listId !== id) // Remove tasks of deleted list
+        tasks: state.tasks.filter((task) => task.listId !== id)
       })),
 
       addTask: (listId, title) => set((state) => ({
@@ -66,8 +75,8 @@ export const useTaskStore = create<TaskState>()(
             listId,
             title,
             completed: false,
-            isImportant: listId === 'default-2', // Automatically mark important if added in Important list
-            subTasks: [],
+            isImportant: listId === 'default-2',
+            steps: [],
             createdAt: new Date().toISOString()
           },
           ...state.tasks
@@ -109,47 +118,52 @@ export const useTaskStore = create<TaskState>()(
         return state;
       }),
 
-      addSubTask: (taskId, title) => set((state) => ({
+      moveTask: (taskId, newListId) => set((state) => ({
+        tasks: state.tasks.map((task) => 
+          task.id === taskId ? { ...task, listId: newListId } : task
+        )
+      })),
+
+      addStep: (taskId, title) => set((state) => ({
         tasks: state.tasks.map((task) =>
           task.id === taskId
             ? {
                 ...task,
-                subTasks: [
-                  ...task.subTasks,
-                  { id: crypto.randomUUID(), title, completed: false }
+                steps: [
+                  ...task.steps,
+                  { id: crypto.randomUUID(), title, isCompleted: false }
                 ]
               }
             : task
         )
       })),
 
-      toggleSubTask: (taskId, subTaskId) => set((state) => ({
+      toggleStep: (taskId, stepId) => set((state) => ({
         tasks: state.tasks.map((task) =>
           task.id === taskId
             ? {
                 ...task,
-                subTasks: task.subTasks.map((st) =>
-                  st.id === subTaskId ? { ...st, completed: !st.completed } : st
+                steps: task.steps.map((st) =>
+                  st.id === stepId ? { ...st, isCompleted: !st.isCompleted } : st
                 )
               }
             : task
         )
       })),
 
-      deleteSubTask: (taskId, subTaskId) => set((state) => ({
+      deleteStep: (taskId, stepId) => set((state) => ({
         tasks: state.tasks.map((task) =>
           task.id === taskId
             ? {
                 ...task,
-                subTasks: task.subTasks.filter((st) => st.id !== subTaskId)
+                steps: task.steps.filter((st) => st.id !== stepId)
               }
             : task
         )
       }))
-
     }),
     {
-      name: 'next-todo-storage', // name of the item in the storage (must be unique)
+      name: 'next-todo-storage',
     }
   )
 );

@@ -1,7 +1,7 @@
-export interface SubTask {
+export interface Step {
   id: string;
   title: string;
-  completed: boolean;
+  isCompleted: boolean;
 }
 
 export interface Task {
@@ -13,7 +13,8 @@ export interface Task {
   completed: boolean;
   isImportant: boolean;
   dueDate?: string | null;
-  subTasks: SubTask[];
+  icon?: string;
+  steps: Step[];
   createdAt: string;
 }
 
@@ -22,5 +23,7 @@ export interface TodoList {
   name: string;
   icon?: string;
   color?: string;
+  background?: string;
+  bgOpacity?: number;
   createdAt: string;
 }
