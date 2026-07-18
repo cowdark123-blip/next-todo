@@ -4,6 +4,7 @@ import { Task } from '@/types';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
 import { Check, Star, GripVertical, Circle, CheckCircle, Play, MoreHorizontal, Trash, Palette, MoveRight, ImageOff, ChevronRight, ChevronDown, Plus } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -66,13 +67,26 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
     <div
       ref={isSubtask ? undefined : setNodeRef}
       style={isSubtask ? undefined : { ...style }}
-      className="mb-2"
+      className="mb-2 relative"
     >
-      <div 
+      {/* Background swipe-to-delete area */}
+      <div className="absolute inset-y-0 right-0 w-full flex justify-end items-center pr-4 bg-destructive text-destructive-foreground rounded-lg -z-10 select-none">
+        <Trash className="w-5 h-5" />
+      </div>
+
+      <motion.div 
+        drag="x"
+        dragConstraints={{ left: -80, right: 0 }}
+        dragElastic={0.2}
+        onDragEnd={(e, info) => {
+          if (info.offset.x < -60) {
+            deleteTask(task.id);
+          }
+        }}
         style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
-          "group flex items-center gap-2 bg-background/50 backdrop-blur-sm transition-all cursor-pointer",
+          "group flex items-center gap-2 bg-background/95 backdrop-blur-sm transition-colors cursor-pointer select-none",
           isSubtask 
             ? "p-2 ml-4 mb-1 text-sm border border-l-4 border-l-primary/60 rounded-md scale-[0.98] origin-left hover:brightness-105" 
             : "p-3 rounded-lg border-2 hover:shadow-md hover:brightness-110",
@@ -94,24 +108,24 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
       <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-md border border-border/50 mr-1">
         <button
           onClick={(e) => handleStatusChange(e, 'unfinished')}
-          className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-5 h-5" : "w-6 h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+          className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
           title="Unfinished"
         >
-          <Circle className={isSubtask ? "w-3 h-3" : "w-3.5 h-3.5"} />
+          <Circle className={isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5"} />
         </button>
         <button
           onClick={(e) => handleStatusChange(e, 'in_progress')}
-          className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-5 h-5" : "w-6 h-6", task.status === 'in_progress' ? "bg-blue-500/20 text-blue-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+          className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'in_progress' ? "bg-blue-500/20 text-blue-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
           title="In Progress"
         >
-          <Play className={isSubtask ? "w-3 h-3" : "w-3.5 h-3.5"} />
+          <Play className={isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5"} />
         </button>
         <button
           onClick={(e) => handleStatusChange(e, 'done')}
-          className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-5 h-5" : "w-6 h-6", task.status === 'done' ? "bg-green-500/20 text-green-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+          className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'done' ? "bg-green-500/20 text-green-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
           title="Done"
         >
-          <Check className={isSubtask ? "w-3 h-3" : "w-3.5 h-3.5"} />
+          <Check className={isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5"} />
         </button>
       </div>
 
@@ -208,7 +222,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           />
         </DialogContent>
       </Dialog>
-      </div>
+      </motion.div>
       
       {!isSubtask && isExpanded && (
         <div className="ml-8 mt-2 space-y-2">

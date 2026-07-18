@@ -66,12 +66,15 @@ export function TaskDetailSidebar() {
             onClick={() => setActiveTask(null)}
           />
           <motion.div
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
+            initial={{ y: '100%', opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: '100%', opacity: 0 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 w-full sm:w-96 md:w-80 bg-background/95 backdrop-blur-xl border-l border-border/50 shadow-2xl z-50 flex flex-col"
+            className="fixed z-50 flex flex-col bg-background/95 backdrop-blur-xl shadow-2xl bottom-0 inset-x-0 h-[85vh] rounded-t-2xl border-t border-border/50 md:inset-y-0 md:right-0 md:left-auto md:w-80 md:h-full md:rounded-none md:border-t-0 md:border-l select-none"
           >
+            <div className="w-full flex justify-center pt-2 pb-1 md:hidden">
+              <div className="w-12 h-1.5 bg-muted rounded-full" />
+            </div>
             <div className="flex items-center justify-between p-4 border-b border-border/50">
               <h3 className="font-semibold text-lg">Task Details</h3>
               <Button variant="ghost" size="icon" onClick={() => setActiveTask(null)}>
