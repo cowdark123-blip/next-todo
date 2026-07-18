@@ -16,7 +16,7 @@ export default function DashboardPage() {
         <div 
           className="absolute inset-0 z-0 transition-opacity duration-300 pointer-events-none"
           style={{
-            background: list.background.startsWith('http') ? `url(${list.background}) center/cover` : list.background,
+            background: list.background.startsWith('http') || list.background.startsWith('data:') ? `url(${list.background}) center/cover` : list.background,
             opacity: list.bgOpacity ?? 1
           }}
         />

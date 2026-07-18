@@ -27,12 +27,17 @@ export function Sidebar() {
     }
   };
 
-  const renderIcon = (iconName?: string) => {
-    switch (iconName) {
+  const renderIcon = (iconStr?: string) => {
+    switch (iconStr) {
       case 'Sun': return <Sun className="w-5 h-5" />;
       case 'Star': return <Star className="w-5 h-5" />;
       case 'Home': return <Home className="w-5 h-5" />;
-      default: return <ListIcon className="w-5 h-5" />;
+      case 'ListIcon': return <ListIcon className="w-5 h-5" />;
+      default: 
+        if (iconStr) {
+           return <span className="text-lg leading-none flex items-center justify-center w-5 h-5">{iconStr}</span>;
+        }
+        return <ListIcon className="w-5 h-5" />;
     }
   };
 
