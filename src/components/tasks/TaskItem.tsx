@@ -183,20 +183,22 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleTaskImportance(task.id);
-        }}
-        className={cn(
-          "p-2 rounded-full transition-colors flex-shrink-0",
-          task.isImportant 
-            ? "text-yellow-500 hover:bg-yellow-500/10" 
-            : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100"
-        )}
-      >
-        <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />
-      </button>
+      {!isSubtask && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleTaskImportance(task.id);
+          }}
+          className={cn(
+            "p-2 rounded-full transition-colors flex-shrink-0",
+            task.isImportant 
+              ? "text-yellow-500 hover:bg-yellow-500/10" 
+              : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100"
+          )}
+        >
+          <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />
+        </button>
+      )}
 
       <Dialog open={showEmojiDialog} onOpenChange={setShowEmojiDialog}>
         <DialogContent className="w-fit p-0 border-none bg-transparent shadow-none" onClick={(e) => e.stopPropagation()}>
