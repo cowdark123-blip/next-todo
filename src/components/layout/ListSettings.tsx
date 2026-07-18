@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Settings2, Trash, Palette, Type, Upload } from 'lucide-react';
+import { Settings2, Trash, Palette, Type, Upload, Check, AlertCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn, fileToBase64 } from '@/lib/utils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
@@ -21,9 +21,30 @@ export function ListSettings({ listId }: ListSettingsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  React.useEffect(() => {
+    if (list) {
+      setEditName(list.name);
+      setErrorMsg('');
+    }
+  }, [list?.name, isOpen]);
+
   if (!list) return null;
+
+  const handleSaveName = () => {
+    const trimmed = editName.trim();
+    if (trimmed.length < 1 || trimmed.length > 30) {
+      setErrorMsg('Tên phải từ 1 đến 30 ký tự!');
+      setEditName(list.name);
+      setTimeout(() => setErrorMsg(''), 3000);
+    } else {
+      updateList(listId, { name: trimmed });
+      setErrorMsg('');
+    }
+  };
 
   const handleDelete = () => {
     deleteList(listId);
@@ -57,12 +78,23 @@ export function ListSettings({ listId }: ListSettingsProps) {
             <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">
               <Type className="w-3.5 h-3.5" /> List Name
             </label>
-            <input
-              type="text"
-              value={list.name}
-              onChange={(e) => updateList(listId, { name: e.target.value })}
-              className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
+            <div className="flex gap-2 relative">
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handleSaveName()}
+                className={cn("w-full px-3 py-2 text-sm bg-background border rounded-md focus:outline-none focus:ring-2", errorMsg ? "border-destructive focus:ring-destructive/50" : "border-border focus:ring-primary/50")}
+              />
+              <Button size="icon" onClick={handleSaveName} variant="secondary" className="shrink-0">
+                <Check className="w-4 h-4" />
+              </Button>
+            </div>
+            {errorMsg && (
+              <p className="text-xs text-destructive flex items-center gap-1 mt-1">
+                <AlertCircle className="w-3 h-3" /> {errorMsg}
+              </p>
+            )}
           </div>
 
           <div className="space-y-2 pt-2 relative">

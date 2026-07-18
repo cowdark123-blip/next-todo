@@ -220,6 +220,8 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
             <Plus className="w-4 h-4 text-muted-foreground" />
             <input 
               type="text" 
+              maxLength={30}
+              minLength={1}
               value={newSubtaskTitle}
               onChange={(e) => setNewSubtaskTitle(e.target.value)}
               placeholder={t('addSubtask')}

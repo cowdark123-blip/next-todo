@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Trash, Plus, Palette } from 'lucide-react';
+import { X, Trash, Plus, Palette, Check, AlertCircle } from 'lucide-react';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
@@ -18,9 +18,30 @@ export function TaskDetailSidebar() {
   const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
   const task = tasks.find(t => t.id === activeTaskId);
   const subtasks = tasks.filter(t => t.parentId === activeTaskId);
+
+  React.useEffect(() => {
+    if (task) {
+      setEditTitle(task.title);
+      setErrorMsg('');
+    }
+  }, [task?.title, activeTaskId]);
+
+  const handleSaveTitle = () => {
+    const trimmed = editTitle.trim();
+    if (trimmed.length < 1 || trimmed.length > 30) {
+      setErrorMsg('Tên phải từ 1 đến 30 ký tự!');
+      if (task) setEditTitle(task.title);
+      setTimeout(() => setErrorMsg(''), 3000);
+    } else {
+      if (task) updateTask(task.id, { title: trimmed });
+      setErrorMsg('');
+    }
+  };
   
   const handleAddSubtask = (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,12 +80,27 @@ export function TaskDetailSidebar() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-              <input
-                type="text"
-                value={task.title}
-                onChange={(e) => updateTask(task.id, { title: e.target.value })}
-                className="w-full text-lg font-medium bg-transparent border-none focus:outline-none focus:ring-0 px-1"
-              />
+              <div className="space-y-1">
+                <div className="flex gap-2 items-start">
+                  <input
+                    type="text"
+                    value={editTitle}
+                    onChange={(e) => setEditTitle(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSaveTitle()}
+                    className={cn("w-full text-lg font-medium bg-transparent border-b focus:outline-none px-1 py-1", errorMsg ? "border-destructive text-destructive" : "border-transparent focus:border-primary/50")}
+                  />
+                  {editTitle !== task.title && (
+                    <Button size="icon" variant="secondary" onClick={handleSaveTitle} className="shrink-0 h-8 w-8 mt-0.5">
+                      <Check className="w-4 h-4 text-primary" />
+                    </Button>
+                  )}
+                </div>
+                {errorMsg && (
+                  <p className="text-xs text-destructive px-1 flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> {errorMsg}
+                  </p>
+                )}
+              </div>
 
               <div className="space-y-3 relative">
                 <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">

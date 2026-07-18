@@ -109,6 +109,8 @@ export function TaskList({ listId }: TaskListProps) {
             </div>
             <input
               type="text"
+              maxLength={30}
+              minLength={1}
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl leading-5 bg-background shadow-lg md:shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
