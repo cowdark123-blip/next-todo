@@ -111,6 +111,9 @@ export function Sidebar() {
                 <input
                   type="text"
                   autoFocus
+                  required
+                  maxLength={30}
+                  minLength={1}
                   value={newListName}
                   onChange={(e) => setNewListName(e.target.value)}
                   placeholder={t('newListName')}

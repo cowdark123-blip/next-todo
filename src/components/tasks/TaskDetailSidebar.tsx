@@ -49,7 +49,7 @@ export function TaskDetailSidebar() {
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-y-0 right-0 w-80 bg-background/95 backdrop-blur-xl border-l border-border/50 shadow-2xl z-50 flex flex-col"
+            className="fixed inset-y-0 right-0 w-full sm:w-96 md:w-80 bg-background/95 backdrop-blur-xl border-l border-border/50 shadow-2xl z-50 flex flex-col"
           >
             <div className="flex items-center justify-between p-4 border-b border-border/50">
               <h3 className="font-semibold text-lg">Task Details</h3>

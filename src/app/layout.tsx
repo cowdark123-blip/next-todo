@@ -8,6 +8,12 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   title: 'Next-Gen Task Manager',
   description: 'A modern, beautiful task management app',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Next To-Do',
+  },
 };
 
 export default function RootLayout({
