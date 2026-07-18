@@ -13,24 +13,25 @@ import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 export function TaskDetailSidebar() {
   const { activeTaskId, setActiveTask } = useUiStore();
-  const { tasks, lists, updateTask, deleteTask, addStep, toggleStep, deleteStep, moveTask } = useTaskStore();
+  const { tasks, lists, updateTask, deleteTask, moveTask, addTask, updateTaskStatus } = useTaskStore();
   
-  const [newStepTitle, setNewStepTitle] = useState('');
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const task = tasks.find(t => t.id === activeTaskId);
+  const subtasks = tasks.filter(t => t.parentId === activeTaskId);
   
-  const handleAddStep = (e: React.FormEvent) => {
+  const handleAddSubtask = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newStepTitle.trim() && task) {
-      addStep(task.id, newStepTitle.trim());
-      setNewStepTitle('');
+    if (newSubtaskTitle.trim() && task) {
+      addTask(task.listId, newSubtaskTitle.trim(), task.id);
+      setNewSubtaskTitle('');
     }
   };
 
-  const completedSteps = task?.steps.filter(s => s.isCompleted).length || 0;
-  const progress = task?.steps.length ? (completedSteps / task.steps.length) * 100 : 0;
+  const completedSubtasks = subtasks.filter(s => s.status === 'done').length;
+  const progress = subtasks.length ? (completedSubtasks / subtasks.length) * 100 : 0;
 
   return (
     <AnimatePresence>
@@ -109,36 +110,36 @@ export function TaskDetailSidebar() {
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-medium">Steps</h4>
-                  <span className="text-xs text-muted-foreground">{completedSteps}/{task.steps.length}</span>
+                  <h4 className="text-sm font-medium">Sub-tasks</h4>
+                  <span className="text-xs text-muted-foreground">{completedSubtasks}/{subtasks.length}</span>
                 </div>
-                {task.steps.length > 0 && <Progress value={progress} className="h-2" />}
+                {subtasks.length > 0 && <Progress value={progress} className="h-2" />}
                 
                 <div className="space-y-2">
-                  {task.steps.map(step => (
-                    <div key={step.id} className="flex items-center gap-3 group bg-muted/30 hover:bg-muted/60 p-2 rounded-md transition-colors border border-transparent hover:border-border/50">
+                  {subtasks.map(st => (
+                    <div key={st.id} className="flex items-center gap-3 group bg-muted/30 hover:bg-muted/60 p-2 rounded-md transition-colors border border-transparent hover:border-border/50">
                       <input
                         type="checkbox"
-                        checked={step.isCompleted}
-                        onChange={() => toggleStep(task.id, step.id)}
+                        checked={st.status === 'done'}
+                        onChange={() => updateTaskStatus(st.id, st.status === 'done' ? 'unfinished' : 'done')}
                         className="w-4 h-4 rounded-sm border-primary/50 text-primary focus:ring-primary/50 cursor-pointer"
                       />
-                      <span className={`flex-1 text-sm transition-all ${step.isCompleted ? 'line-through text-muted-foreground opacity-70' : ''}`}>
-                        {step.title}
+                      <span className={`flex-1 text-sm transition-all ${st.status === 'done' ? 'line-through text-muted-foreground opacity-70' : ''}`}>
+                        {st.title}
                       </span>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10" onClick={() => deleteStep(task.id, step.id)}>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10" onClick={() => deleteTask(st.id)}>
                         <X className="w-3.5 h-3.5 text-destructive" />
                       </Button>
                     </div>
                   ))}
                 </div>
 
-                <form onSubmit={handleAddStep} className="flex gap-2">
+                <form onSubmit={handleAddSubtask} className="flex gap-2">
                   <input
                     type="text"
-                    value={newStepTitle}
-                    onChange={(e) => setNewStepTitle(e.target.value)}
-                    placeholder="Next step"
+                    value={newSubtaskTitle}
+                    onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                    placeholder="Add a sub-task"
                     className="flex-1 text-sm bg-transparent border-b border-border/50 focus:border-primary focus:outline-none px-1 py-2"
                   />
                   <Button type="submit" size="sm" variant="ghost"><Plus className="w-4 h-4" /></Button>

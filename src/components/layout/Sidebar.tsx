@@ -10,10 +10,14 @@ import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Settings } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
+import { useTheme } from 'next-themes';
 
 export function Sidebar() {
   const { lists, addList, statusColors, updateStatusColors } = useTaskStore();
-  const { isSidebarOpen, setSidebarOpen } = useUiStore();
+  const { isSidebarOpen, setSidebarOpen, language, setLanguage } = useUiStore();
+  const t = useTranslation();
+  const { theme, setTheme, themes } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   
@@ -71,7 +75,7 @@ export function Sidebar() {
               <span className={cn(pathname === '/list/all' ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
                 <span className="text-lg leading-none flex items-center justify-center w-5 h-5">📋</span>
               </span>
-              <span className="truncate">All Tasks</span>
+              <span className="truncate">{t('allTasks')}</span>
             </Link>
 
             {lists.map((list) => {
@@ -109,7 +113,7 @@ export function Sidebar() {
                   autoFocus
                   value={newListName}
                   onChange={(e) => setNewListName(e.target.value)}
-                  placeholder="New list name"
+                  placeholder={t('newListName')}
                   className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
                   onBlur={() => !newListName && setIsAddingList(false)}
                 />
@@ -121,7 +125,7 @@ export function Sidebar() {
                 onClick={() => setIsAddingList(true)}
               >
                 <Plus className="w-5 h-5 mr-3" />
-                New List
+                {t('newList')}
               </Button>
             )}
 
@@ -129,16 +133,51 @@ export function Sidebar() {
               <DialogTrigger className="w-full">
                 <div className="flex w-full items-center justify-start px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent mt-2 cursor-pointer transition-colors">
                   <Settings className="w-5 h-5 mr-3" />
-                  Settings
+                  {t('settings')}
                 </div>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Global Settings</DialogTitle>
+                  <DialogTitle>{t('settings')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">{t('language')}</label>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant={language === 'en' ? 'default' : 'outline'} 
+                        size="sm"
+                        onClick={() => setLanguage('en')}
+                      >
+                        EN
+                      </Button>
+                      <Button 
+                        variant={language === 'vi' ? 'default' : 'outline'} 
+                        size="sm"
+                        onClick={() => setLanguage('vi')}
+                      >
+                        VI
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium">{t('theme')}</label>
+                    <div className="flex gap-2 flex-wrap max-w-[200px] justify-end">
+                      {themes.map(t => (
+                        <Button 
+                          key={t}
+                          variant={theme === t ? 'default' : 'outline'} 
+                          size="sm"
+                          onClick={() => setTheme(t)}
+                          className="capitalize"
+                        >
+                          {t.replace('theme-', '')}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
                   <div>
-                    <label className="text-sm font-medium">Done Status Color</label>
+                    <label className="text-sm font-medium">{t('doneStatusColor')}</label>
                     <div className="flex gap-2 mt-2">
                       <input 
                         type="color" 
@@ -150,7 +189,7 @@ export function Sidebar() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium">In Progress Status Color</label>
+                    <label className="text-sm font-medium">{t('inProgressStatusColor')}</label>
                     <div className="flex gap-2 mt-2">
                       <input 
                         type="color" 
@@ -162,7 +201,7 @@ export function Sidebar() {
                     </div>
                   </div>
                   <div>
-                    <label className="text-sm font-medium">Unfinished Status Color</label>
+                    <label className="text-sm font-medium">{t('unfinishedStatusColor')}</label>
                     <div className="flex gap-2 mt-2">
                       <input 
                         type="color" 

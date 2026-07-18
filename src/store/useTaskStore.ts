@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { Task, TodoList, Step } from '@/types';
+import { Task, TodoList } from '@/types';
 
 interface TaskState {
   lists: TodoList[];
@@ -15,18 +15,13 @@ interface TaskState {
   updateStatusColors: (colors: Partial<{ done: string; in_progress: string; unfinished: string }>) => void;
   
   // Task Actions
-  addTask: (listId: string, title: string) => void;
+  addTask: (listId: string, title: string, parentId?: string) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
   updateTaskStatus: (id: string, status: 'done' | 'in_progress' | 'unfinished') => void;
   toggleTaskImportance: (id: string) => void;
   reorderTasks: (activeId: string, overId: string) => void;
   moveTask: (taskId: string, newListId: string) => void;
-  
-  // Steps Actions
-  addStep: (taskId: string, title: string) => void;
-  toggleStep: (taskId: string, stepId: string) => void;
-  deleteStep: (taskId: string, stepId: string) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -78,15 +73,15 @@ export const useTaskStore = create<TaskState>()(
         statusColors: { ...state.statusColors, ...colors }
       })),
 
-      addTask: (listId, title) => set((state) => ({
+      addTask: (listId, title, parentId) => set((state) => ({
         tasks: [
           {
             id: crypto.randomUUID(),
             listId,
+            parentId,
             title,
             status: 'unfinished',
             isImportant: listId === 'default-2',
-            steps: [],
             createdAt: new Date().toISOString()
           },
           ...state.tasks
@@ -100,14 +95,23 @@ export const useTaskStore = create<TaskState>()(
       })),
 
       deleteTask: (id) => set((state) => ({
-        tasks: state.tasks.filter((task) => task.id !== id)
+        tasks: state.tasks.filter((task) => task.id !== id && task.parentId !== id)
       })),
 
-      updateTaskStatus: (id, status) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === id ? { ...task, status, completed: status === 'done' } : task
-        )
-      })),
+      updateTaskStatus: (id, status) => set((state) => {
+        const isDone = status === 'done';
+        return {
+          tasks: state.tasks.map((task) => {
+            if (task.id === id) {
+              return { ...task, status, completed: isDone };
+            }
+            if (isDone && task.parentId === id) {
+              return { ...task, status: 'done', completed: true };
+            }
+            return task;
+          })
+        };
+      }),
 
       toggleTaskImportance: (id) => set((state) => ({
         tasks: state.tasks.map((task) =>
@@ -130,58 +134,38 @@ export const useTaskStore = create<TaskState>()(
 
       moveTask: (taskId, newListId) => set((state) => ({
         tasks: state.tasks.map((task) => 
-          task.id === taskId ? { ...task, listId: newListId } : task
-        )
-      })),
-
-      addStep: (taskId, title) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                steps: [
-                  ...task.steps,
-                  { id: crypto.randomUUID(), title, isCompleted: false }
-                ]
-              }
-            : task
-        )
-      })),
-
-      toggleStep: (taskId, stepId) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                steps: task.steps.map((st) =>
-                  st.id === stepId ? { ...st, isCompleted: !st.isCompleted } : st
-                )
-              }
-            : task
-        )
-      })),
-
-      deleteStep: (taskId, stepId) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === taskId
-            ? {
-                ...task,
-                steps: task.steps.filter((st) => st.id !== stepId)
-              }
-            : task
+          task.id === taskId || task.parentId === taskId ? { ...task, listId: newListId } : task
         )
       }))
     }),
     {
       name: 'next-todo-storage',
-      version: 1,
+      version: 2,
       migrate: (persistedState: any, version: number) => {
-        if (version === 0) {
+        if (version === 0 || version === 1) {
           if (persistedState.tasks) {
-            persistedState.tasks = persistedState.tasks.map((task: any) => ({
-              ...task,
-              status: task.status || (task.completed ? 'done' : 'unfinished')
-            }));
+            const newTasks: any[] = [];
+            persistedState.tasks.forEach((task: any) => {
+              if (task.steps && task.steps.length > 0) {
+                task.steps.forEach((step: any) => {
+                  newTasks.push({
+                    id: step.id,
+                    listId: task.listId,
+                    parentId: task.id,
+                    title: step.title,
+                    status: step.isCompleted ? 'done' : 'unfinished',
+                    isImportant: false,
+                    createdAt: task.createdAt
+                  });
+                });
+                delete task.steps;
+              }
+              newTasks.push({
+                ...task,
+                status: task.status || (task.completed ? 'done' : 'unfinished')
+              });
+            });
+            persistedState.tasks = newTasks;
           }
           if (persistedState.lists) {
             persistedState.lists = persistedState.lists.filter((l: any) => l.id !== 'default-3');

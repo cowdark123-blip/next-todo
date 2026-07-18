@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Task } from '@/types';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
-import { Check, Star, GripVertical, Circle, CheckCircle, Play, MoreHorizontal, Trash, Palette, MoveRight, ImageOff } from 'lucide-react';
+import { Check, Star, GripVertical, Circle, CheckCircle, Play, MoreHorizontal, Trash, Palette, MoveRight, ImageOff, ChevronRight, ChevronDown, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -11,15 +11,22 @@ import { triggerConfetti } from '@/lib/confetti';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface TaskItemProps {
   task: Task;
+  isSubtask?: boolean;
 }
 
-export function TaskItem({ task }: TaskItemProps) {
-  const { updateTaskStatus, toggleTaskImportance, updateTask, deleteTask, moveTask, lists, statusColors } = useTaskStore();
+export function TaskItem({ task, isSubtask }: TaskItemProps) {
+  const { updateTaskStatus, toggleTaskImportance, updateTask, deleteTask, moveTask, lists, statusColors, addTask, tasks } = useTaskStore();
   const { setActiveTask } = useUiStore();
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [newSubtaskTitle, setNewSubtaskTitle] = useState('');
+  const t = useTranslation();
+
+  const subtasks = tasks.filter(t => t.parentId === task.id);
 
   const {
     attributes,
@@ -46,26 +53,42 @@ export function TaskItem({ task }: TaskItemProps) {
     updateTaskStatus(task.id, status);
   };
 
+  const handleAddSubtask = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newSubtaskTitle.trim()) {
+      addTask(task.listId, newSubtaskTitle.trim(), task.id);
+      setNewSubtaskTitle('');
+      setIsExpanded(true);
+    }
+  };
+
   return (
     <div
-      ref={setNodeRef}
-      style={{ ...style, borderColor: statusColors?.[task.status] || 'transparent' }}
-      onClick={() => setActiveTask(task.id)}
-      className={cn(
-        "group flex items-center gap-2 p-3 mb-2 rounded-lg border-2 bg-background/50 backdrop-blur-sm transition-all cursor-pointer",
-        "hover:shadow-md hover:brightness-110",
-        isDragging && "opacity-50 scale-105 z-50 shadow-xl",
-        task.status === 'done' && "opacity-60"
-      )}
+      ref={isSubtask ? undefined : setNodeRef}
+      style={isSubtask ? undefined : { ...style }}
+      className="mb-2"
     >
-      <button
-        {...attributes}
-        {...listeners}
-        onClick={(e) => e.stopPropagation()}
-        className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-1 -ml-1"
+      <div 
+        style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
+        onClick={() => setActiveTask(task.id)}
+        className={cn(
+          "group flex items-center gap-2 p-3 rounded-lg border-2 bg-background/50 backdrop-blur-sm transition-all cursor-pointer",
+          "hover:shadow-md hover:brightness-110",
+          !isSubtask && isDragging && "opacity-50 scale-105 z-50 shadow-xl",
+          task.status === 'done' && "opacity-60",
+          isSubtask && "border-l-4 border-l-primary/50"
+        )}
       >
-        <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-      </button>
+        {!isSubtask && (
+          <button
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-1 -ml-1"
+          >
+            <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+          </button>
+        )}
 
       <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-md border border-border/50 mr-1">
         <button
@@ -101,11 +124,15 @@ export function TaskItem({ task }: TaskItemProps) {
         )}>
           {task.title}
         </p>
-        {task.steps?.length > 0 && (
-          <div className="flex items-center gap-1 text-xs text-muted-foreground ml-3 px-2 py-0.5 bg-muted/80 rounded-full whitespace-nowrap">
-            <CheckCircle className="w-3 h-3" />
-            <span>{task.steps.filter(s => s.isCompleted).length}/{task.steps.length}</span>
-          </div>
+        
+        {subtasks.length > 0 && (
+          <button 
+            onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
+            className="flex items-center gap-1 text-xs text-muted-foreground ml-2 px-2 py-0.5 bg-muted/80 rounded-full whitespace-nowrap hover:bg-muted transition-colors"
+          >
+            {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            <span>{subtasks.filter(s => s.status === 'done').length}/{subtasks.length}</span>
+          </button>
         )}
       </div>
 
@@ -117,17 +144,26 @@ export function TaskItem({ task }: TaskItemProps) {
           <MoreHorizontal className="w-4 h-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent onClick={(e) => e.stopPropagation()} align="end" className="w-48">
+          {!isSubtask && (
+            <DropdownMenuItem onClick={(e) => { 
+              e.stopPropagation(); 
+              setIsExpanded(true);
+              // Small delay to let UI expand before focusing (in real app we'd use a ref)
+            }}>
+              <Plus className="w-4 h-4 mr-2" /> {t('addSubtask')}
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowEmojiDialog(true); }}>
-            <Palette className="w-4 h-4 mr-2" /> Change Icon
+            <Palette className="w-4 h-4 mr-2" /> {t('changeIcon')}
           </DropdownMenuItem>
           {task.icon && (
             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); updateTask(task.id, { icon: undefined }); }}>
-              <ImageOff className="w-4 h-4 mr-2" /> Remove Icon
+              <ImageOff className="w-4 h-4 mr-2" /> {t('removeIcon')}
             </DropdownMenuItem>
           )}
           <DropdownMenuSub>
             <DropdownMenuSubTrigger>
-              <MoveRight className="w-4 h-4 mr-2" /> Move to List
+              <MoveRight className="w-4 h-4 mr-2" /> {t('moveToList')}
             </DropdownMenuSubTrigger>
             <DropdownMenuSubContent>
               {lists.filter(l => l.id !== task.listId).map(l => (
@@ -139,7 +175,7 @@ export function TaskItem({ task }: TaskItemProps) {
           </DropdownMenuSub>
           <DropdownMenuSeparator />
           <DropdownMenuItem className="text-destructive focus:bg-destructive/10" onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}>
-            <Trash className="w-4 h-4 mr-2" /> Delete
+            <Trash className="w-4 h-4 mr-2" /> {t('delete')}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -170,6 +206,26 @@ export function TaskItem({ task }: TaskItemProps) {
           />
         </DialogContent>
       </Dialog>
+      </div>
+      
+      {!isSubtask && isExpanded && (
+        <div className="ml-8 mt-2 space-y-2">
+          {subtasks.map(st => (
+            <TaskItem key={st.id} task={st} isSubtask={true} />
+          ))}
+          
+          <form onSubmit={handleAddSubtask} className="flex items-center gap-2 px-3 py-2 bg-background/30 rounded-lg border border-border/50">
+            <Plus className="w-4 h-4 text-muted-foreground" />
+            <input 
+              type="text" 
+              value={newSubtaskTitle}
+              onChange={(e) => setNewSubtaskTitle(e.target.value)}
+              placeholder={t('addSubtask')}
+              className="flex-1 bg-transparent text-sm focus:outline-none"
+            />
+          </form>
+        </div>
+      )}
     </div>
   );
 }

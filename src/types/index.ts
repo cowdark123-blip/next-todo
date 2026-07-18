@@ -1,12 +1,7 @@
-export interface Step {
-  id: string;
-  title: string;
-  isCompleted: boolean;
-}
-
 export interface Task {
   id: string;
   listId: string;
+  parentId?: string; // For sub-tasks
   title: string;
   description?: string;
   notes?: string;
@@ -15,7 +10,6 @@ export interface Task {
   isImportant: boolean;
   dueDate?: string | null;
   icon?: string;
-  steps: Step[];
   createdAt: string;
 }
 

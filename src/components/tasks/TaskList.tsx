@@ -5,6 +5,7 @@ import { TaskItem } from './TaskItem';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface TaskListProps {
   listId: string;
@@ -13,8 +14,10 @@ interface TaskListProps {
 export function TaskList({ listId }: TaskListProps) {
   const { tasks, addTask, reorderTasks } = useTaskStore();
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const t = useTranslation();
   
-  const listTasks = listId === 'all' ? tasks : tasks.filter(t => t.listId === listId);
+  const rootTasks = tasks.filter(t => !t.parentId);
+  const listTasks = listId === 'all' ? rootTasks : rootTasks.filter(t => t.listId === listId);
   const unfinishedTasks = listTasks.filter(t => t.status === 'unfinished');
   const inProgressTasks = listTasks.filter(t => t.status === 'in_progress');
   const doneTasks = listTasks.filter(t => t.status === 'done');
@@ -54,7 +57,7 @@ export function TaskList({ listId }: TaskListProps) {
           {unfinishedTasks.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                Unfinished <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{unfinishedTasks.length}</span>
+                {t('unfinished')} <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{unfinishedTasks.length}</span>
               </h3>
               <SortableContext items={unfinishedTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                 {unfinishedTasks.map((task) => (
@@ -67,7 +70,7 @@ export function TaskList({ listId }: TaskListProps) {
           {inProgressTasks.length > 0 && (
             <div className="mb-6">
               <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                In Progress <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{inProgressTasks.length}</span>
+                {t('inProgress')} <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{inProgressTasks.length}</span>
               </h3>
               <SortableContext items={inProgressTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                 {inProgressTasks.map((task) => (
@@ -80,7 +83,7 @@ export function TaskList({ listId }: TaskListProps) {
           {doneTasks.length > 0 && (
             <div className="mb-6 opacity-70">
               <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-                Done <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{doneTasks.length}</span>
+                {t('done')} <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{doneTasks.length}</span>
               </h3>
               <SortableContext items={doneTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
                 {doneTasks.map((task) => (
@@ -93,7 +96,7 @@ export function TaskList({ listId }: TaskListProps) {
 
         {listTasks.length === 0 && (
           <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-            <p>No tasks yet. Add one below!</p>
+            <p>{t('noTasks')}</p>
           </div>
         )}
       </div>
@@ -109,7 +112,7 @@ export function TaskList({ listId }: TaskListProps) {
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl leading-5 bg-background/80 backdrop-blur-sm shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
-              placeholder="Add a task"
+              placeholder={t('addATask')}
             />
           </form>
         </div>
