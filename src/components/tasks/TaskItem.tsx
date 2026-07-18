@@ -78,20 +78,21 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         drag="x"
         dragConstraints={{ left: -80, right: 0 }}
         dragElastic={0.2}
+        dragDirectionLock
         onDragEnd={(e, info) => {
           if (info.offset.x < -60) {
             deleteTask(task.id);
           }
         }}
-        style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
+        style={{ borderColor: statusColors?.[task.status] || 'transparent', touchAction: 'pan-y' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
-          "group flex items-center gap-2 bg-background/95 backdrop-blur-sm transition-colors cursor-pointer select-none",
+          "group flex items-center gap-2 transition-colors cursor-pointer select-none",
           isSubtask 
             ? "p-2 ml-4 mb-1 text-sm border border-l-4 border-l-primary/60 rounded-md scale-[0.98] origin-left hover:brightness-105" 
             : "p-3 rounded-lg border-2 hover:shadow-md hover:brightness-110",
           !isSubtask && isDragging && "opacity-50 scale-105 z-50 shadow-xl",
-          task.status === 'done' && "opacity-60"
+          task.status === 'done' ? "bg-muted text-muted-foreground" : "bg-background"
         )}
       >
         {!isSubtask && (
@@ -155,7 +156,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
       <DropdownMenu>
         <DropdownMenuTrigger
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
-          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-0 group-hover:opacity-100 transition-all flex-shrink-0 focus:outline-none"
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all flex-shrink-0 focus:outline-none"
         >
           <MoreHorizontal className="w-4 h-4" />
         </DropdownMenuTrigger>
@@ -205,7 +206,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           "p-2 rounded-full transition-colors flex-shrink-0",
           task.isImportant 
             ? "text-yellow-500 hover:bg-yellow-500/10" 
-            : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-0 group-hover:opacity-100"
+            : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100"
         )}
       >
         <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />
