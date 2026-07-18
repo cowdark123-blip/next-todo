@@ -8,7 +8,7 @@ import { Slider } from '@/components/ui/slider';
 import { Settings2, Trash, Image as ImageIcon, Type, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn, fileToBase64 } from '@/lib/utils';
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 interface ListSettingsProps {
   listId: string;
@@ -81,6 +81,7 @@ export function ListSettings({ listId }: ListSettingsProps) {
             {showEmojiPicker && (
               <div className="absolute top-full left-0 z-50 mt-2 shadow-xl rounded-lg bg-background">
                 <EmojiPicker 
+                  theme={Theme.DARK}
                   onEmojiClick={(emoji) => {
                     updateListSettings(listId, { icon: emoji.emoji });
                     setShowEmojiPicker(false);

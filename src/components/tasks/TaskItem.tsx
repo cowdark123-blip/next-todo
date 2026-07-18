@@ -1,21 +1,25 @@
 "use client"
-import React from 'react';
+import React, { useState } from 'react';
 import { Task } from '@/types';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
-import { Check, Star, GripVertical, Circle, CheckCircle, Heart, Coffee, Briefcase, AlertCircle, Zap } from 'lucide-react';
+import { Check, Star, GripVertical, Circle, CheckCircle, Heart, Coffee, Briefcase, AlertCircle, Zap, MoreHorizontal, Trash, Palette, MoveRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { triggerConfetti } from '@/lib/confetti';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSub, DropdownMenuSubTrigger, DropdownMenuSubContent, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 interface TaskItemProps {
   task: Task;
 }
 
 export function TaskItem({ task }: TaskItemProps) {
-  const { toggleTaskCompletion, toggleTaskImportance } = useTaskStore();
+  const { toggleTaskCompletion, toggleTaskImportance, updateTask, deleteTask, moveTask, lists } = useTaskStore();
   const { setActiveTask, selectedTaskIds, toggleTaskSelection } = useUiStore();
+  const [showEmojiDialog, setShowEmojiDialog] = useState(false);
 
   const isSelected = selectedTaskIds.includes(task.id);
   const hasSelection = selectedTaskIds.length > 0;
@@ -113,6 +117,38 @@ export function TaskItem({ task }: TaskItemProps) {
         )}
       </div>
 
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent onClick={(e) => e.stopPropagation()} align="end" className="w-48">
+          <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowEmojiDialog(true); }}>
+            <Palette className="w-4 h-4 mr-2" /> Change Icon
+          </DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <MoveRight className="w-4 h-4 mr-2" /> Move to List
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {lists.filter(l => l.id !== task.listId).map(l => (
+                <DropdownMenuItem key={l.id} onClick={(e) => { e.stopPropagation(); moveTask(task.id, l.id); }}>
+                  {l.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="text-destructive focus:bg-destructive/10" onClick={(e) => { e.stopPropagation(); deleteTask(task.id); }}>
+            <Trash className="w-4 h-4 mr-2" /> Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -127,6 +163,18 @@ export function TaskItem({ task }: TaskItemProps) {
       >
         <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />
       </button>
+
+      <Dialog open={showEmojiDialog} onOpenChange={setShowEmojiDialog}>
+        <DialogContent className="w-fit p-0 border-none bg-transparent shadow-none" onClick={(e) => e.stopPropagation()}>
+          <EmojiPicker 
+            theme={Theme.DARK}
+            onEmojiClick={(emoji) => {
+              updateTask(task.id, { icon: emoji.emoji });
+              setShowEmojiDialog(false);
+            }}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

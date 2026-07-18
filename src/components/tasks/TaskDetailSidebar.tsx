@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import EmojiPicker from 'emoji-picker-react';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 export function TaskDetailSidebar() {
   const { activeTaskId, setActiveTask } = useUiStore();
@@ -81,6 +81,7 @@ export function TaskDetailSidebar() {
                 {showEmojiPicker && (
                   <div className="absolute top-full left-0 z-50 mt-2 shadow-xl rounded-lg bg-background">
                     <EmojiPicker 
+                      theme={Theme.DARK}
                       onEmojiClick={(emoji) => {
                         updateTask(task.id, { icon: emoji.emoji });
                         setShowEmojiPicker(false);
