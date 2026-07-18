@@ -69,22 +69,8 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
       style={isSubtask ? undefined : { ...style }}
       className="mb-2 relative"
     >
-      {/* Background swipe-to-delete area */}
-      <div className="absolute inset-y-0 right-0 w-full flex justify-end items-center pr-4 bg-destructive text-destructive-foreground rounded-lg -z-10 select-none">
-        <Trash className="w-5 h-5" />
-      </div>
-
-      <motion.div 
-        drag="x"
-        dragConstraints={{ left: -80, right: 0 }}
-        dragElastic={0.2}
-        dragDirectionLock
-        onDragEnd={(e, info) => {
-          if (info.offset.x < -60) {
-            deleteTask(task.id);
-          }
-        }}
-        style={{ borderColor: statusColors?.[task.status] || 'transparent', touchAction: 'pan-y' }}
+      <div 
+        style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
           "group flex items-center gap-2 transition-colors cursor-pointer select-none",
@@ -223,7 +209,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           />
         </DialogContent>
       </Dialog>
-      </motion.div>
+      </div>
       
       {!isSubtask && isExpanded && (
         <div className="ml-8 mt-2 space-y-2">
