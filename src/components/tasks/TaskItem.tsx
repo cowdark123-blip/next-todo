@@ -147,7 +147,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           <MoreHorizontal className="w-4 h-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent onClick={(e) => e.stopPropagation()} align="end" className="w-48">
-          {!isSubtask && (
+          {!isSubtask && task.status !== 'done' && (
             <DropdownMenuItem onClick={(e) => { 
               e.stopPropagation(); 
               setIsExpanded(true);
