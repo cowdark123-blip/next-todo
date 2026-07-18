@@ -118,13 +118,11 @@ export function TaskItem({ task }: TaskItemProps) {
       </div>
 
       <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <button
-            onClick={(e) => e.stopPropagation()}
-            className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-0 group-hover:opacity-100 transition-all flex-shrink-0"
-          >
-            <MoreHorizontal className="w-4 h-4" />
-          </button>
+        <DropdownMenuTrigger
+          onClick={(e: React.MouseEvent) => e.stopPropagation()}
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-0 group-hover:opacity-100 transition-all flex-shrink-0 focus:outline-none"
+        >
+          <MoreHorizontal className="w-4 h-4" />
         </DropdownMenuTrigger>
         <DropdownMenuContent onClick={(e) => e.stopPropagation()} align="end" className="w-48">
           <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowEmojiDialog(true); }}>
