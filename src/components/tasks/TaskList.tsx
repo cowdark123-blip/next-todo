@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useTaskStore } from '@/store/useTaskStore';
 import { TaskItem } from './TaskItem';
+import { FloatingActionBar } from './FloatingActionBar';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
@@ -83,7 +84,7 @@ export function TaskList({ listId }: TaskListProps) {
       </div>
 
       {listId !== 'all' && (
-        <div className="absolute bottom-4 left-4 right-4 md:static md:bottom-auto md:left-auto md:right-auto md:p-0">
+        <div className="absolute bottom-4 left-4 right-4 md:static md:bottom-auto md:left-auto md:right-auto md:p-0 z-10">
           <form onSubmit={handleAddTask} className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Plus className="h-5 w-5 text-muted-foreground" />
@@ -92,12 +93,14 @@ export function TaskList({ listId }: TaskListProps) {
               type="text"
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl leading-5 bg-background shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+              className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl leading-5 bg-background/80 backdrop-blur-sm shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
               placeholder="Add a task"
             />
           </form>
         </div>
       )}
+
+      <FloatingActionBar />
     </div>
   );
 }

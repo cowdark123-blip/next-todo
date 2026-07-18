@@ -10,6 +10,10 @@ interface UiState {
   
   activeTaskId: string | null;
   setActiveTask: (id: string | null) => void;
+
+  selectedTaskIds: string[];
+  toggleTaskSelection: (id: string) => void;
+  clearSelection: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -21,5 +25,13 @@ export const useUiStore = create<UiState>((set) => ({
   toggleFocusMode: () => set((state) => ({ isFocusMode: !state.isFocusMode })),
   
   activeTaskId: null,
-  setActiveTask: (id) => set({ activeTaskId: id })
+  setActiveTask: (id) => set({ activeTaskId: id }),
+
+  selectedTaskIds: [],
+  toggleTaskSelection: (id) => set((state) => ({
+    selectedTaskIds: state.selectedTaskIds.includes(id) 
+      ? state.selectedTaskIds.filter(tId => tId !== id)
+      : [...state.selectedTaskIds, id]
+  })),
+  clearSelection: () => set({ selectedTaskIds: [] })
 }));

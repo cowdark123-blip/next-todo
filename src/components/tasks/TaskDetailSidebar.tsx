@@ -115,18 +115,18 @@ export function TaskDetailSidebar() {
                 
                 <div className="space-y-2">
                   {task.steps.map(step => (
-                    <div key={step.id} className="flex items-center gap-2 group">
+                    <div key={step.id} className="flex items-center gap-3 group bg-muted/30 hover:bg-muted/60 p-2 rounded-md transition-colors border border-transparent hover:border-border/50">
                       <input
                         type="checkbox"
                         checked={step.isCompleted}
                         onChange={() => toggleStep(task.id, step.id)}
-                        className="w-4 h-4 rounded-sm border-primary text-primary focus:ring-primary"
+                        className="w-4 h-4 rounded-sm border-primary/50 text-primary focus:ring-primary/50 cursor-pointer"
                       />
-                      <span className={`flex-1 text-sm ${step.isCompleted ? 'line-through text-muted-foreground' : ''}`}>
+                      <span className={`flex-1 text-sm transition-all ${step.isCompleted ? 'line-through text-muted-foreground opacity-70' : ''}`}>
                         {step.title}
                       </span>
-                      <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100" onClick={() => deleteStep(task.id, step.id)}>
-                        <X className="w-3 h-3 text-destructive" />
+                      <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-destructive/10" onClick={() => deleteStep(task.id, step.id)}>
+                        <X className="w-3.5 h-3.5 text-destructive" />
                       </Button>
                     </div>
                   ))}

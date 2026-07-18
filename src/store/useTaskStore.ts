@@ -25,6 +25,10 @@ interface TaskState {
   addStep: (taskId: string, title: string) => void;
   toggleStep: (taskId: string, stepId: string) => void;
   deleteStep: (taskId: string, stepId: string) => void;
+  
+  // Multi-select Actions
+  deleteTasks: (ids: string[]) => void;
+  completeTasks: (ids: string[]) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -159,6 +163,16 @@ export const useTaskStore = create<TaskState>()(
                 steps: task.steps.filter((st) => st.id !== stepId)
               }
             : task
+        )
+      })),
+
+      deleteTasks: (ids) => set((state) => ({
+        tasks: state.tasks.filter((task) => !ids.includes(task.id))
+      })),
+
+      completeTasks: (ids) => set((state) => ({
+        tasks: state.tasks.map((task) =>
+          ids.includes(task.id) ? { ...task, completed: true } : task
         )
       }))
     }),
