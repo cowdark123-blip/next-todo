@@ -85,7 +85,7 @@ export function TaskDetailSidebar() {
 
               <div className="space-y-3">
                 <h4 className="text-sm font-medium">Move to List</h4>
-                <Select value={task.listId} onValueChange={(val) => moveTask(task.id, val)}>
+                <Select value={task.listId} onValueChange={(val) => { if (val) moveTask(task.id, val); }}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select list" />
                   </SelectTrigger>

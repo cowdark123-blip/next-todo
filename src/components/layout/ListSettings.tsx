@@ -13,6 +13,9 @@ interface ListSettingsProps {
 
 const AVAILABLE_ICONS = ['Sun', 'Star', 'Home', 'List', 'Briefcase', 'Heart', 'Coffee', 'Book'];
 
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+
 export function ListSettings({ listId }: ListSettingsProps) {
   const { lists, updateList, updateListSettings, deleteList } = useTaskStore();
   const router = useRouter();
@@ -29,10 +32,8 @@ export function ListSettings({ listId }: ListSettingsProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-          <Settings2 className="h-4 w-4" />
-        </Button>
+      <PopoverTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-muted-foreground hover:text-foreground")}>
+        <Settings2 className="h-4 w-4" />
       </PopoverTrigger>
       <PopoverContent className="w-80 p-4" align="end">
         <div className="space-y-4">
@@ -93,7 +94,10 @@ export function ListSettings({ listId }: ListSettingsProps) {
               value={[list.bgOpacity ?? 1]}
               max={1}
               step={0.01}
-              onValueChange={([val]) => updateListSettings(listId, { bgOpacity: val })}
+              onValueChange={(val: any) => {
+                const newValue = Array.isArray(val) ? val[0] : val;
+                updateListSettings(listId, { bgOpacity: newValue });
+              }}
             />
           </div>
 
