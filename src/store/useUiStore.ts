@@ -10,10 +10,6 @@ interface UiState {
   
   activeTaskId: string | null;
   setActiveTask: (id: string | null) => void;
-
-  selectedTaskIds: string[];
-  toggleTaskSelection: (id: string) => void;
-  clearSelection: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
@@ -26,12 +22,4 @@ export const useUiStore = create<UiState>((set) => ({
   
   activeTaskId: null,
   setActiveTask: (id) => set({ activeTaskId: id }),
-
-  selectedTaskIds: [],
-  toggleTaskSelection: (id) => set((state) => ({
-    selectedTaskIds: state.selectedTaskIds.includes(id) 
-      ? state.selectedTaskIds.filter(tId => tId !== id)
-      : [...state.selectedTaskIds, id]
-  })),
-  clearSelection: () => set({ selectedTaskIds: [] })
 }));

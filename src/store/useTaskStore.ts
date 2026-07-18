@@ -25,19 +25,15 @@ interface TaskState {
   addStep: (taskId: string, title: string) => void;
   toggleStep: (taskId: string, stepId: string) => void;
   deleteStep: (taskId: string, stepId: string) => void;
-  
-  // Multi-select Actions
-  deleteTasks: (ids: string[]) => void;
-  completeTasks: (ids: string[]) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
   persist(
     (set) => ({
       lists: [
-        { id: 'default-1', name: 'My Day', icon: 'Sun', createdAt: new Date().toISOString() },
-        { id: 'default-2', name: 'Important', icon: 'Star', createdAt: new Date().toISOString() },
-        { id: 'default-3', name: 'Tasks', icon: 'Home', createdAt: new Date().toISOString() }
+        { id: 'default-1', name: 'My Day', icon: '☀️', createdAt: new Date().toISOString() },
+        { id: 'default-2', name: 'Important', icon: '⭐', createdAt: new Date().toISOString() },
+        { id: 'default-3', name: 'Tasks', icon: '🏠', createdAt: new Date().toISOString() }
       ],
       tasks: [],
 
@@ -163,16 +159,6 @@ export const useTaskStore = create<TaskState>()(
                 steps: task.steps.filter((st) => st.id !== stepId)
               }
             : task
-        )
-      })),
-
-      deleteTasks: (ids) => set((state) => ({
-        tasks: state.tasks.filter((task) => !ids.includes(task.id))
-      })),
-
-      completeTasks: (ids) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          ids.includes(task.id) ? { ...task, completed: true } : task
         )
       }))
     }),

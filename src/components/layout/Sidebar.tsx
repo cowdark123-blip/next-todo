@@ -21,25 +21,12 @@ export function Sidebar() {
   const handleAddList = (e: React.FormEvent) => {
     e.preventDefault();
     if (newListName.trim()) {
-      addList(newListName.trim(), 'ListIcon');
+      addList(newListName.trim(), '📁');
       setNewListName('');
       setIsAddingList(false);
     }
   };
 
-  const renderIcon = (iconStr?: string) => {
-    switch (iconStr) {
-      case 'Sun': return <Sun className="w-5 h-5" />;
-      case 'Star': return <Star className="w-5 h-5" />;
-      case 'Home': return <Home className="w-5 h-5" />;
-      case 'ListIcon': return <ListIcon className="w-5 h-5" />;
-      default: 
-        if (iconStr) {
-           return <span className="text-lg leading-none flex items-center justify-center w-5 h-5">{iconStr}</span>;
-        }
-        return <ListIcon className="w-5 h-5" />;
-    }
-  };
 
   return (
     <>
@@ -99,8 +86,12 @@ export function Sidebar() {
                   )}
                   onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                 >
-                  <span className={cn(isActive ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
-                    {renderIcon(list.icon)}
+                  <span className={cn("text-lg leading-none flex items-center justify-center w-5 h-5", isActive ? "opacity-100 grayscale-0" : "opacity-70 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all")}>
+                    {list.icon === 'Sun' ? '☀️' : 
+                     list.icon === 'Star' ? '⭐' : 
+                     list.icon === 'Home' ? '🏠' : 
+                     list.icon === 'ListIcon' ? '📁' : 
+                     (list.icon || '📁')}
                   </span>
                   <span className="truncate">{list.name}</span>
                 </Link>

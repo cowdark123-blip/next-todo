@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Settings2, Trash, Image as ImageIcon, Type, Upload } from 'lucide-react';
+import { Settings2, Trash, Palette, Type, Upload } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn, fileToBase64 } from '@/lib/utils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
@@ -49,7 +49,7 @@ export function ListSettings({ listId }: ListSettingsProps) {
       <PopoverTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-muted-foreground hover:text-foreground")}>
         <Settings2 className="h-4 w-4" />
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-4" align="end">
+      <PopoverContent className={cn("p-4 transition-all duration-200", showEmojiPicker ? "w-[340px]" : "w-80")} align="end">
         <div className="space-y-4 max-h-[80vh] overflow-y-auto">
           <h4 className="font-medium leading-none mb-4">List Settings</h4>
           
@@ -79,42 +79,50 @@ export function ListSettings({ listId }: ListSettingsProps) {
             </div>
             
             {showEmojiPicker && (
-              <div className="absolute top-full left-0 z-50 mt-2 shadow-xl rounded-lg bg-background">
+              <div className="mt-2 w-full flex justify-center">
                 <EmojiPicker 
                   theme={Theme.DARK}
                   onEmojiClick={(emoji) => {
                     updateListSettings(listId, { icon: emoji.emoji });
                     setShowEmojiPicker(false);
                   }}
-                  width={280}
-                  height={300}
+                  width="100%"
+                  height={320}
                 />
               </div>
             )}
           </div>
 
-          <div className="space-y-2 pt-2">
-            <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-              <ImageIcon className="w-3.5 h-3.5" /> Background URL / Color
+          <div className="space-y-3 pt-2">
+            <label className="text-xs font-medium text-muted-foreground flex items-center justify-between">
+              <span className="flex items-center gap-2"><Palette className="w-3.5 h-3.5" /> Background Theme</span>
+              <div>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  ref={fileInputRef} 
+                  onChange={handleFileUpload} 
+                />
+                <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={() => fileInputRef.current?.click()}>
+                  <Upload className="w-3 h-3 mr-1" /> Upload Image
+                </Button>
+              </div>
             </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={list.background || ''}
-                onChange={(e) => updateListSettings(listId, { background: e.target.value })}
-                placeholder="#ff0000 or https://..."
-                className="flex-1 min-w-0 px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
-              />
-              <input 
-                type="file" 
-                accept="image/*" 
-                className="hidden" 
-                ref={fileInputRef} 
-                onChange={handleFileUpload} 
-              />
-              <Button variant="outline" size="icon" className="shrink-0" onClick={() => fileInputRef.current?.click()}>
-                <Upload className="w-4 h-4" />
-              </Button>
+            <div className="flex flex-wrap gap-2">
+              {['transparent', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#6366f1'].map((c) => (
+                <button
+                  key={c}
+                  className={cn(
+                    "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none", 
+                    list.background === c ? "border-primary" : "border-transparent",
+                    c === 'transparent' ? 'border-border bg-muted/50' : ''
+                  )}
+                  style={{ backgroundColor: c === 'transparent' ? undefined : c }}
+                  onClick={() => updateListSettings(listId, { background: c })}
+                  title={c}
+                />
+              ))}
             </div>
           </div>
 

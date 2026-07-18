@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { useTaskStore } from '@/store/useTaskStore';
 import { TaskItem } from './TaskItem';
-import { FloatingActionBar } from './FloatingActionBar';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Plus } from 'lucide-react';
@@ -99,8 +98,6 @@ export function TaskList({ listId }: TaskListProps) {
           </form>
         </div>
       )}
-
-      <FloatingActionBar />
     </div>
   );
 }

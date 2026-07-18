@@ -18,11 +18,8 @@ interface TaskItemProps {
 
 export function TaskItem({ task }: TaskItemProps) {
   const { toggleTaskCompletion, toggleTaskImportance, updateTask, deleteTask, moveTask, lists } = useTaskStore();
-  const { setActiveTask, selectedTaskIds, toggleTaskSelection } = useUiStore();
+  const { setActiveTask } = useUiStore();
   const [showEmojiDialog, setShowEmojiDialog] = useState(false);
-
-  const isSelected = selectedTaskIds.includes(task.id);
-  const hasSelection = selectedTaskIds.length > 0;
 
   const {
     attributes,
@@ -58,8 +55,7 @@ export function TaskItem({ task }: TaskItemProps) {
         "group flex items-center gap-3 p-3 mb-2 rounded-lg border border-border/50 bg-background/50 backdrop-blur-sm transition-all cursor-pointer",
         "hover:shadow-md hover:border-primary/30",
         isDragging && "opacity-50 scale-105 z-50 shadow-xl border-primary/50",
-        task.completed && "opacity-60",
-        isSelected && "border-primary/50 bg-primary/5"
+        task.completed && "opacity-60"
       )}
     >
       <button
@@ -70,22 +66,6 @@ export function TaskItem({ task }: TaskItemProps) {
       >
         <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
       </button>
-
-      <div 
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleTaskSelection(task.id);
-        }}
-        className={cn(
-          "w-4 h-4 rounded-sm border flex items-center justify-center transition-all cursor-pointer flex-shrink-0 -ml-1 mr-1",
-          isSelected 
-            ? "bg-primary border-primary text-primary-foreground opacity-100" 
-            : "border-muted-foreground opacity-0 group-hover:opacity-100 hover:border-primary",
-          hasSelection && "opacity-100"
-        )}
-      >
-        {isSelected && <Check className="w-3 h-3" />}
-      </div>
 
       <button
         onClick={handleToggle}
