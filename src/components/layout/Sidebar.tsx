@@ -70,6 +70,21 @@ export function Sidebar() {
           </div>
 
           <nav className="flex-1 overflow-y-auto space-y-1 pr-2">
+            <Link
+              href="/list/all"
+              className={cn(
+                "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                "hover:bg-primary/10 group mb-2",
+                pathname === '/list/all' ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
+              )}
+              onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
+            >
+              <span className={cn(pathname === '/list/all' ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
+                <span className="text-lg leading-none flex items-center justify-center w-5 h-5">📋</span>
+              </span>
+              <span className="truncate">All Tasks</span>
+            </Link>
+
             {lists.map((list) => {
               const isActive = pathname === `/list/${list.id}` || (pathname === '/' && list.id === 'default-1');
               

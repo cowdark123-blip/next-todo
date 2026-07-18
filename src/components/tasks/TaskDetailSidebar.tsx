@@ -4,17 +4,20 @@ import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trash, Plus, Palette } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 import { Progress } from '@/components/ui/progress';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
-const AVAILABLE_ICONS = ['Circle', 'CheckCircle', 'Star', 'Heart', 'Coffee', 'Briefcase', 'AlertCircle', 'Zap'];
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import EmojiPicker from 'emoji-picker-react';
 
 export function TaskDetailSidebar() {
   const { activeTaskId, setActiveTask } = useUiStore();
   const { tasks, lists, updateTask, deleteTask, addStep, toggleStep, deleteStep, moveTask } = useTaskStore();
   
   const [newStepTitle, setNewStepTitle] = useState('');
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const task = tasks.find(t => t.id === activeTaskId);
   
@@ -62,25 +65,31 @@ export function TaskDetailSidebar() {
                 className="w-full text-lg font-medium bg-transparent border-none focus:outline-none focus:ring-0 px-1"
               />
 
-              <div className="space-y-3">
+              <div className="space-y-3 relative">
                 <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">
                   <Palette className="w-3.5 h-3.5" /> Task Icon
                 </label>
-                <div className="grid grid-cols-4 gap-2">
-                  {AVAILABLE_ICONS.map(icon => (
-                    <button
-                      key={icon}
-                      onClick={() => updateTask(task.id, { icon })}
-                      className={`p-2 rounded-md border text-xs text-center transition-colors ${
-                        task.icon === icon 
-                          ? 'bg-primary/20 border-primary text-primary' 
-                          : 'border-border hover:bg-muted'
-                      }`}
-                    >
-                      {icon}
-                    </button>
-                  ))}
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 flex items-center justify-center bg-muted rounded-md text-xl">
+                    {task.icon || '📄'}
+                  </div>
+                  <Button variant="outline" size="sm" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
+                    {showEmojiPicker ? 'Close Picker' : 'Choose Emoji'}
+                  </Button>
                 </div>
+                
+                {showEmojiPicker && (
+                  <div className="absolute top-full left-0 z-50 mt-2 shadow-xl rounded-lg bg-background">
+                    <EmojiPicker 
+                      onEmojiClick={(emoji) => {
+                        updateTask(task.id, { icon: emoji.emoji });
+                        setShowEmojiPicker(false);
+                      }}
+                      width={280}
+                      height={300}
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="space-y-3">
@@ -147,16 +156,29 @@ export function TaskDetailSidebar() {
             </div>
 
             <div className="p-4 border-t border-border/50">
-              <Button 
-                variant="destructive" 
-                className="w-full"
-                onClick={() => {
-                  deleteTask(task.id);
-                  setActiveTask(null);
-                }}
-              >
-                <Trash className="w-4 h-4 mr-2" /> Delete Task
-              </Button>
+              <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <DialogTrigger className={cn(buttonVariants({ variant: "destructive" }), "w-full")}>
+                  <Trash className="w-4 h-4 mr-2" /> Delete Task
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Delete Task?</DialogTitle>
+                    <DialogDescription>
+                      Are you sure you want to delete "{task.title}"? This action cannot be undone.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <DialogFooter className="mt-4">
+                    <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
+                    <Button variant="destructive" onClick={() => {
+                      deleteTask(task.id);
+                      setActiveTask(null);
+                      setIsDeleteDialogOpen(false);
+                    }}>
+                      Yes, delete
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </motion.div>
         </>

@@ -13,10 +13,6 @@ interface TaskItemProps {
   task: Task;
 }
 
-const IconMap: Record<string, any> = {
-  Circle, CheckCircle, Star, Heart, Coffee, Briefcase, AlertCircle, Zap
-};
-
 export function TaskItem({ task }: TaskItemProps) {
   const { toggleTaskCompletion, toggleTaskImportance } = useTaskStore();
   const { setActiveTask } = useUiStore();
@@ -45,8 +41,6 @@ export function TaskItem({ task }: TaskItemProps) {
     }
     toggleTaskCompletion(task.id);
   };
-
-  const TaskIcon = task.icon ? IconMap[task.icon] || Circle : null;
 
   return (
     <div
@@ -82,7 +76,9 @@ export function TaskItem({ task }: TaskItemProps) {
       </button>
 
       <div className="flex-1 min-w-0 flex items-center gap-2">
-        {TaskIcon && !task.completed && <TaskIcon className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
+        {task.icon && !task.completed && (
+          <span className="text-base flex-shrink-0 leading-none">{task.icon}</span>
+        )}
         <p className={cn(
           "text-sm font-medium truncate transition-all",
           task.completed && "line-through text-muted-foreground"

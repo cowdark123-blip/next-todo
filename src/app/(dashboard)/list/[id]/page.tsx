@@ -10,6 +10,24 @@ export default function ListPage() {
   const listId = params.id as string;
   const lists = useTaskStore((state) => state.lists);
   
+  if (listId === 'all') {
+    return (
+      <div className="h-full flex flex-col relative rounded-xl overflow-hidden -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">All Tasks</h1>
+              <p className="text-muted-foreground mt-1">Here is everything on your plate.</p>
+            </div>
+          </div>
+          <div className="flex-1">
+            <TaskList listId="all" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const list = lists.find(l => l.id === listId);
   
   if (!list) {
