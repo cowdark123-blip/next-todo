@@ -3,7 +3,6 @@ import React from 'react';
 import { useUiStore } from '@/store/useUiStore';
 import { Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ThemeSwitcher } from '@/components/shared/ThemeSwitcher';
 
 export function Header() {
   const { toggleSidebar } = useUiStore();
@@ -20,7 +19,6 @@ export function Header() {
         <span className="sr-only">Toggle sidebar</span>
       </Button>
       <div className="flex-1" />
-      <ThemeSwitcher />
     </header>
   );
 }
