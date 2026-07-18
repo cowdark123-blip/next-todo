@@ -8,9 +8,11 @@ import { Home, Star, Sun, List as ListIcon, Plus, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Settings } from 'lucide-react';
 
 export function Sidebar() {
-  const { lists, addList } = useTaskStore();
+  const { lists, addList, statusColors, updateStatusColors } = useTaskStore();
   const { isSidebarOpen, setSidebarOpen } = useUiStore();
   const pathname = usePathname();
   const router = useRouter();
@@ -122,6 +124,58 @@ export function Sidebar() {
                 New List
               </Button>
             )}
+
+            <Dialog>
+              <DialogTrigger className="w-full">
+                <div className="flex w-full items-center justify-start px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent mt-2 cursor-pointer transition-colors">
+                  <Settings className="w-5 h-5 mr-3" />
+                  Settings
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Global Settings</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div>
+                    <label className="text-sm font-medium">Done Status Color</label>
+                    <div className="flex gap-2 mt-2">
+                      <input 
+                        type="color" 
+                        value={statusColors.done} 
+                        onChange={(e) => updateStatusColors({ done: e.target.value })}
+                        className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
+                      />
+                      <span className="text-sm font-mono flex items-center">{statusColors.done}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">In Progress Status Color</label>
+                    <div className="flex gap-2 mt-2">
+                      <input 
+                        type="color" 
+                        value={statusColors.in_progress} 
+                        onChange={(e) => updateStatusColors({ in_progress: e.target.value })}
+                        className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
+                      />
+                      <span className="text-sm font-mono flex items-center">{statusColors.in_progress}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium">Unfinished Status Color</label>
+                    <div className="flex gap-2 mt-2">
+                      <input 
+                        type="color" 
+                        value={statusColors.unfinished} 
+                        onChange={(e) => updateStatusColors({ unfinished: e.target.value })}
+                        className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
+                      />
+                      <span className="text-sm font-mono flex items-center">{statusColors.unfinished}</span>
+                    </div>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </aside>

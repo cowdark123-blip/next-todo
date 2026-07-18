@@ -5,18 +5,20 @@ import { Task, TodoList, Step } from '@/types';
 interface TaskState {
   lists: TodoList[];
   tasks: Task[];
+  statusColors: { done: string; in_progress: string; unfinished: string };
   
   // List Actions
   addList: (name: string, icon?: string, color?: string) => void;
   updateList: (id: string, updates: Partial<TodoList>) => void;
   updateListSettings: (id: string, settings: { background?: string, bgOpacity?: number, icon?: string }) => void;
   deleteList: (id: string) => void;
+  updateStatusColors: (colors: Partial<{ done: string; in_progress: string; unfinished: string }>) => void;
   
   // Task Actions
   addTask: (listId: string, title: string) => void;
   updateTask: (id: string, updates: Partial<Task>) => void;
   deleteTask: (id: string) => void;
-  toggleTaskCompletion: (id: string) => void;
+  updateTaskStatus: (id: string, status: 'done' | 'in_progress' | 'unfinished') => void;
   toggleTaskImportance: (id: string) => void;
   reorderTasks: (activeId: string, overId: string) => void;
   moveTask: (taskId: string, newListId: string) => void;
@@ -32,10 +34,14 @@ export const useTaskStore = create<TaskState>()(
     (set) => ({
       lists: [
         { id: 'default-1', name: 'My Day', icon: '☀️', createdAt: new Date().toISOString() },
-        { id: 'default-2', name: 'Important', icon: '⭐', createdAt: new Date().toISOString() },
-        { id: 'default-3', name: 'Tasks', icon: '🏠', createdAt: new Date().toISOString() }
+        { id: 'default-2', name: 'Important', icon: '⭐', createdAt: new Date().toISOString() }
       ],
       tasks: [],
+      statusColors: {
+        done: '#22c55e',
+        in_progress: '#3b82f6',
+        unfinished: '#ef4444'
+      },
 
       addList: (name, icon, color) => set((state) => ({
         lists: [
@@ -68,13 +74,17 @@ export const useTaskStore = create<TaskState>()(
         tasks: state.tasks.filter((task) => task.listId !== id)
       })),
 
+      updateStatusColors: (colors) => set((state) => ({
+        statusColors: { ...state.statusColors, ...colors }
+      })),
+
       addTask: (listId, title) => set((state) => ({
         tasks: [
           {
             id: crypto.randomUUID(),
             listId,
             title,
-            completed: false,
+            status: 'unfinished',
             isImportant: listId === 'default-2',
             steps: [],
             createdAt: new Date().toISOString()
@@ -93,9 +103,9 @@ export const useTaskStore = create<TaskState>()(
         tasks: state.tasks.filter((task) => task.id !== id)
       })),
 
-      toggleTaskCompletion: (id) => set((state) => ({
+      updateTaskStatus: (id, status) => set((state) => ({
         tasks: state.tasks.map((task) =>
-          task.id === id ? { ...task, completed: !task.completed } : task
+          task.id === id ? { ...task, status, completed: status === 'done' } : task
         )
       })),
 
@@ -164,6 +174,24 @@ export const useTaskStore = create<TaskState>()(
     }),
     {
       name: 'next-todo-storage',
+      version: 1,
+      migrate: (persistedState: any, version: number) => {
+        if (version === 0) {
+          if (persistedState.tasks) {
+            persistedState.tasks = persistedState.tasks.map((task: any) => ({
+              ...task,
+              status: task.status || (task.completed ? 'done' : 'unfinished')
+            }));
+          }
+          if (persistedState.lists) {
+            persistedState.lists = persistedState.lists.filter((l: any) => l.id !== 'default-3');
+          }
+          if (!persistedState.statusColors) {
+            persistedState.statusColors = { done: '#22c55e', in_progress: '#3b82f6', unfinished: '#ef4444' };
+          }
+        }
+        return persistedState;
+      }
     }
   )
 );

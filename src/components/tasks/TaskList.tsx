@@ -15,8 +15,9 @@ export function TaskList({ listId }: TaskListProps) {
   const [newTaskTitle, setNewTaskTitle] = useState('');
   
   const listTasks = listId === 'all' ? tasks : tasks.filter(t => t.listId === listId);
-  const activeTasks = listTasks.filter(t => !t.completed);
-  const completedTasks = listTasks.filter(t => t.completed);
+  const unfinishedTasks = listTasks.filter(t => t.status === 'unfinished');
+  const inProgressTasks = listTasks.filter(t => t.status === 'in_progress');
+  const doneTasks = listTasks.filter(t => t.status === 'done');
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -45,35 +46,50 @@ export function TaskList({ listId }: TaskListProps) {
     <div className="flex flex-col h-[calc(100vh-10rem)]">
       <div className="flex-1 overflow-y-auto pr-2 pb-24 space-y-2">
         
-        {/* Active Tasks (Draggable) */}
         <DndContext 
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext 
-            items={activeTasks.map(t => t.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {activeTasks.map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
-          </SortableContext>
-        </DndContext>
-        
-        {/* Completed Tasks */}
-        {completedTasks.length > 0 && (
-          <div className="mt-8 pt-4">
-            <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
-              Completed <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{completedTasks.length}</span>
-            </h3>
-            <div className="space-y-2 opacity-70">
-              {completedTasks.map((task) => (
-                <TaskItem key={task.id} task={task} />
-              ))}
+          {unfinishedTasks.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                Unfinished <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{unfinishedTasks.length}</span>
+              </h3>
+              <SortableContext items={unfinishedTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                {unfinishedTasks.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))}
+              </SortableContext>
             </div>
-          </div>
-        )}
+          )}
+
+          {inProgressTasks.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                In Progress <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{inProgressTasks.length}</span>
+              </h3>
+              <SortableContext items={inProgressTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                {inProgressTasks.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))}
+              </SortableContext>
+            </div>
+          )}
+
+          {doneTasks.length > 0 && (
+            <div className="mb-6 opacity-70">
+              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+                Done <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{doneTasks.length}</span>
+              </h3>
+              <SortableContext items={doneTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
+                {doneTasks.map((task) => (
+                  <TaskItem key={task.id} task={task} />
+                ))}
+              </SortableContext>
+            </div>
+          )}
+        </DndContext>
 
         {listTasks.length === 0 && (
           <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">

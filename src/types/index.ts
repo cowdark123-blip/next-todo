@@ -10,7 +10,8 @@ export interface Task {
   title: string;
   description?: string;
   notes?: string;
-  completed: boolean;
+  status: 'done' | 'in_progress' | 'unfinished';
+  completed?: boolean; // For backward compatibility migration
   isImportant: boolean;
   dueDate?: string | null;
   icon?: string;
