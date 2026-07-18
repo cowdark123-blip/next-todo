@@ -217,18 +217,20 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
             <TaskItem key={st.id} task={st} isSubtask={true} />
           ))}
           
-          <form onSubmit={handleAddSubtask} className="flex items-center gap-2 px-3 py-2 bg-background/30 rounded-lg border border-border/50">
-            <Plus className="w-4 h-4 text-muted-foreground" />
-            <input 
-              type="text" 
-              maxLength={30}
-              minLength={1}
-              value={newSubtaskTitle}
-              onChange={(e) => setNewSubtaskTitle(e.target.value)}
-              placeholder={t('addSubtask')}
-              className="flex-1 bg-transparent text-sm focus:outline-none"
-            />
-          </form>
+          {task.status !== 'done' && (
+            <form onSubmit={handleAddSubtask} className="flex items-center gap-2 px-3 py-2 bg-background/30 rounded-lg border border-border/50">
+              <Plus className="w-4 h-4 text-muted-foreground" />
+              <input 
+                type="text" 
+                maxLength={30}
+                minLength={1}
+                value={newSubtaskTitle}
+                onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                placeholder={t('addSubtask')}
+                className="flex-1 bg-transparent text-sm focus:outline-none"
+              />
+            </form>
+          )}
         </div>
       )}
     </div>

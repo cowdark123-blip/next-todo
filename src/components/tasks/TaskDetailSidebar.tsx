@@ -173,16 +173,18 @@ export function TaskDetailSidebar() {
                   ))}
                 </div>
 
-                <form onSubmit={handleAddSubtask} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={newSubtaskTitle}
-                    onChange={(e) => setNewSubtaskTitle(e.target.value)}
-                    placeholder="Add a sub-task"
-                    className="flex-1 text-sm bg-transparent border-b border-border/50 focus:border-primary focus:outline-none px-1 py-2"
-                  />
-                  <Button type="submit" size="sm" variant="ghost"><Plus className="w-4 h-4" /></Button>
-                </form>
+                {task.status !== 'done' && (
+                  <form onSubmit={handleAddSubtask} className="flex gap-2">
+                    <input
+                      type="text"
+                      value={newSubtaskTitle}
+                      onChange={(e) => setNewSubtaskTitle(e.target.value)}
+                      placeholder="Add a sub-task"
+                      className="flex-1 text-sm bg-transparent border-b border-border/50 focus:border-primary focus:outline-none px-1 py-2"
+                    />
+                    <Button type="submit" size="sm" variant="ghost"><Plus className="w-4 h-4" /></Button>
+                  </form>
+                )}
               </div>
               
               <div className="space-y-2">
