@@ -24,8 +24,8 @@ export function AddTaskFloating({ listId }: AddTaskFloatingProps) {
   };
 
   return (
-    <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-4xl z-30 transition-all duration-300
-      [.is-pip-mode_&]:bottom-4 [.is-pip-mode_&]:w-[calc(100%-1rem)]">
+    <div className="absolute bottom-6 left-0 right-0 px-4 w-full max-w-4xl mx-auto z-30 transition-all duration-300
+      [.is-pip-mode_&]:bottom-4 [.is-pip-mode_&]:px-2">
       <form onSubmit={handleAddTask} className="relative animate-in fade-in slide-in-from-bottom-4 duration-300">
         {/* Floating wrapper: rounded, bordered, shadow in both modes */}
         <div className="flex items-center bg-background/90 backdrop-blur-md border border-border shadow-lg rounded-2xl overflow-hidden px-3 py-1 transition-all duration-300
