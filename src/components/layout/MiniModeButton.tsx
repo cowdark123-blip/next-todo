@@ -97,20 +97,16 @@ export function MiniModeButton() {
       pipWindowCache = pipWin;
       setPipMode(true);
 
-      let resizeTimeout: NodeJS.Timeout;
       pipWin.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-          const newWidth = Math.max(pipWin.innerWidth, 300);
-          const newHeight = Math.max(pipWin.innerHeight, 350);
-          if (pipWin.innerWidth < 300 || pipWin.innerHeight < 350) {
-            try {
-              pipWin.resizeTo(newWidth, newHeight);
-            } catch (e) {
-              // Browser might block resizeTo
-            }
+        const newWidth = Math.max(pipWin.innerWidth, 300);
+        const newHeight = Math.max(pipWin.innerHeight, 350);
+        if (pipWin.innerWidth < 300 || pipWin.innerHeight < 350) {
+          try {
+            pipWin.resizeTo(newWidth, newHeight);
+          } catch (e) {
+            // Browser might block resizeTo
           }
-        }, 200);
+        }
       });
 
       pipWin.addEventListener('pagehide', () => {
