@@ -180,6 +180,7 @@ export function Sidebar() {
   const [newListName, setNewListName] = useState('');
   const [isAddingList, setIsAddingList] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [listsCollapsed, setListsCollapsed] = useState(false);
 
   React.useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -279,11 +280,27 @@ export function Sidebar() {
               <span className="truncate">{t('important')}</span>
             </Link>
 
-            {/* Separator */}
-            <div className="h-px bg-border my-3 mx-2" />
+            {/* Separator with collapse toggle */}
+            <div className="flex items-center gap-2 my-3 mx-1">
+              <div className="flex-1 h-px bg-current opacity-20" />
+              <button
+                onClick={() => setListsCollapsed(c => !c)}
+                className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider opacity-40 hover:opacity-90 transition-opacity cursor-pointer select-none"
+              >
+                <span>My Lists</span>
+                <svg
+                  className={cn("w-3 h-3 transition-transform duration-200", listsCollapsed ? "-rotate-90" : "")}
+                  viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                  strokeLinecap="round" strokeLinejoin="round"
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </button>
+              <div className="flex-1 h-px bg-current opacity-20" />
+            </div>
 
             {/* User lists */}
-            {lists.map((list) => {
+            {!listsCollapsed && lists.map((list) => {
               const isActive = pathname === `/list/${list.id}`;
               return (
                 <Link
