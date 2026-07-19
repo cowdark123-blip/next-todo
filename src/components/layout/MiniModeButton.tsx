@@ -30,7 +30,7 @@ export function PipContainer({ children }: { children: React.ReactNode }) {
 
   if (pipWindow) {
     return createPortal(
-      <div className="h-screen w-screen overflow-hidden bg-background">
+      <div className="h-screen w-screen overflow-hidden bg-background min-w-[340px]">
         <main className="h-full overflow-y-auto">
           {children}
         </main>
@@ -96,6 +96,21 @@ export function MiniModeButton() {
 
       pipWindowCache = pipWin;
       setPipMode(true);
+
+      // Prevent shrinking too small
+      let resizeTimeout: NodeJS.Timeout;
+      pipWin.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          if (pipWin.innerWidth < 340) {
+            try {
+              pipWin.resizeTo(340, pipWin.innerHeight);
+            } catch (e) {
+              // Browser might block resizeTo
+            }
+          }
+        }, 200);
+      });
 
       pipWin.addEventListener('pagehide', () => {
         pipWindowCache = null;
