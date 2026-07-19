@@ -139,6 +139,7 @@ export function TaskList({ listId }: TaskListProps) {
             <p className={!textColor ? "text-muted-foreground" : "font-medium drop-shadow-sm"}>{t('noTasks')}</p>
           </div>
         )}
+      </div>
     </div>
   );
 }
