@@ -13,8 +13,7 @@ interface TaskListProps {
 }
 
 export function TaskList({ listId }: TaskListProps) {
-  const { tasks, addTask, reorderTasks, statusColors, lists, specialListSettings } = useTaskStore();
-  const [newTaskTitle, setNewTaskTitle] = useState('');
+  const { tasks, reorderTasks, statusColors, lists, specialListSettings } = useTaskStore();
   const [sortBy, setSortBy] = useState<'manual' | 'starred' | 'name' | 'date'>('manual');
   const t = useTranslation();
   
@@ -50,14 +49,6 @@ export function TaskList({ listId }: TaskListProps) {
     
     if (over && active.id !== over.id) {
       reorderTasks(active.id as string, over.id as string);
-    }
-  };
-
-  const handleAddTask = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newTaskTitle.trim() && listId !== 'all') {
-      addTask(listId, newTaskTitle.trim());
-      setNewTaskTitle('');
     }
   };
 

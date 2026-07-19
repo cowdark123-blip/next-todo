@@ -172,7 +172,7 @@ export function Sidebar() {
   const t = useTranslation();
   const { theme, setTheme, themes } = useTheme();
   const pathname = usePathname();
-  const router = useRouter();
+
 
   const [newListName, setNewListName] = useState('');
   const [isAddingList, setIsAddingList] = useState(false);

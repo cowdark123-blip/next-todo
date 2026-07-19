@@ -2,7 +2,6 @@
 "use client"
 import React from 'react';
 import { TaskList } from '@/components/tasks/TaskList';
-import { ListSettings } from '@/components/layout/ListSettings';
 import { useTaskStore } from '@/store/useTaskStore';
 
 export default function DashboardPage() {

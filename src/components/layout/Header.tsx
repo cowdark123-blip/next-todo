@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { MiniModeButton } from '@/components/layout/MiniModeButton';
 
 export function Header() {
-  const { toggleSidebar, isSidebarOpen } = useUiStore();
+  const { toggleSidebar } = useUiStore();
 
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-border/50 bg-background/60 backdrop-blur-xl px-4 sm:px-6">
