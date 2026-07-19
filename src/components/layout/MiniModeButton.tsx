@@ -30,7 +30,7 @@ export function PipContainer({ children }: { children: React.ReactNode }) {
 
   if (pipWindow) {
     return createPortal(
-      <div className="h-screen w-screen overflow-hidden bg-background min-w-[340px]">
+      <div className="h-screen w-screen overflow-hidden bg-background min-w-[280px]">
         <main className="h-full overflow-y-auto">
           {children}
         </main>
@@ -92,19 +92,18 @@ export function MiniModeButton() {
 
       // Copy theme classes
       pipWin.document.documentElement.className = document.documentElement.className;
-      pipWin.document.body.className = document.body.className;
+      pipWin.document.body.className = document.body.className + ' is-pip-mode';
 
       pipWindowCache = pipWin;
       setPipMode(true);
 
-      // Prevent shrinking too small
       let resizeTimeout: NodeJS.Timeout;
       pipWin.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-          if (pipWin.innerWidth < 340) {
+          if (pipWin.innerWidth < 280) {
             try {
-              pipWin.resizeTo(340, pipWin.innerHeight);
+              pipWin.resizeTo(280, pipWin.innerHeight);
             } catch (e) {
               // Browser might block resizeTo
             }

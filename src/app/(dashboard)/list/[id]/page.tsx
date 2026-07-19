@@ -31,13 +31,13 @@ interface PageHeaderProps {
 function PageHeader({ title, description, textColor, settings }: PageHeaderProps) {
   const style = textColor ? { color: textColor } : undefined;
   return (
-    <div className="mb-6 flex items-start justify-between gap-4">
+    <div className="mb-6 flex items-start justify-between gap-4 [.is-pip-mode_&]:mb-2">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight drop-shadow-sm" style={style}>
+        <h1 className="text-3xl font-bold tracking-tight drop-shadow-sm [.is-pip-mode_&]:text-xl" style={style}>
           {title}
         </h1>
         {description && (
-          <p className="mt-1 text-sm opacity-80 drop-shadow-sm" style={style}>
+          <p className="mt-1 text-sm opacity-80 drop-shadow-sm [.is-pip-mode_&]:hidden" style={style}>
             {description}
           </p>
         )}
@@ -59,7 +59,7 @@ export default function ListPage() {
     return (
       <div className="h-full flex flex-col relative">
         <BackgroundLayer background={sp.background} bgOpacity={sp.bgOpacity} />
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
           <PageHeader
             title="All Tasks"
             description={sp.description || "Here is everything on your plate."}
@@ -79,8 +79,8 @@ export default function ListPage() {
   if (!list) {
     return (
       <div className="h-full flex flex-col relative">
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
-          <div className="mb-6 animate-pulse">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+          <div className="mb-6 animate-pulse [.is-pip-mode_&]:mb-2">
             <div className="h-8 bg-muted rounded w-48 mb-2" />
           </div>
           <div className="flex-1">
@@ -94,7 +94,7 @@ export default function ListPage() {
   return (
     <div className="h-full flex flex-col relative">
       <BackgroundLayer background={list.background} bgOpacity={list.bgOpacity} />
-      <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8">
+      <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
         <PageHeader
           title={list.name}
           description={list.description}

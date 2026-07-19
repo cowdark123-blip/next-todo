@@ -92,10 +92,10 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
-          "group flex items-center gap-2 transition-colors cursor-pointer select-none",
+          "group flex items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none",
           isSubtask
             ? "p-2 ml-4 mb-1 text-sm border border-l-4 border-l-primary/60 rounded-md scale-[0.98] origin-left hover:brightness-105"
-            : "p-3 rounded-lg border-2 hover:shadow-md hover:brightness-110",
+            : "p-3 [.is-pip-mode_&]:p-1.5 rounded-lg border-2 hover:shadow-md hover:brightness-110",
           !isSubtask && isDragging && "opacity-50 scale-105 z-50 shadow-xl",
           task.status === 'done' ? "bg-muted/80 backdrop-blur-md text-muted-foreground" : "bg-background/80 backdrop-blur-md"
         )}
@@ -114,24 +114,24 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-md border border-border/50 mr-1">
           <button
             onClick={(e) => handleStatusChange(e, 'unfinished')}
-            className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+            className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
             title="Unfinished"
           >
-            <Circle className={isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5"} />
+            <Circle className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
           </button>
           <button
             onClick={(e) => handleStatusChange(e, 'in_progress')}
-            className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'in_progress' ? "bg-blue-500/20 text-blue-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+            className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'in_progress' ? "bg-blue-500/20 text-blue-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
             title="In Progress"
           >
-            <Play className={isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5"} />
+            <Play className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
           </button>
           <button
             onClick={(e) => handleStatusChange(e, 'done')}
-            className={cn("rounded flex items-center justify-center transition-colors", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'done' ? "bg-green-500/20 text-green-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+            className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'done' ? "bg-green-500/20 text-green-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
             title="Done"
           >
-            <Check className={isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5"} />
+            <Check className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
           </button>
         </div>
 
@@ -301,7 +301,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
       )}
 
       {!isSubtask && isExpanded && (
-        <div className="ml-8 mt-2 space-y-2">
+        <div className="ml-8 [.is-pip-mode_&]:ml-2 mt-2 space-y-2">
           {subtasks.map(st => (
             <TaskItem key={st.id} task={st} isSubtask={true} />
           ))}
