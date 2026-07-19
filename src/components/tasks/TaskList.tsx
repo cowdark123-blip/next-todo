@@ -62,8 +62,8 @@ export function TaskList({ listId }: TaskListProps) {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)]">
-      <div className="flex-1 overflow-y-auto pr-2 pb-24 space-y-2">
+    <div className="flex flex-col h-[calc(100vh-10rem)] relative">
+      <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-2">
         {listTasks.length > 0 && (
           <div className="flex justify-end mb-2">
             <DropdownMenu>
@@ -142,7 +142,7 @@ export function TaskList({ listId }: TaskListProps) {
       </div>
 
       {listId !== 'all' && (
-        <div className="absolute bottom-8 left-4 right-4 md:static md:bottom-auto md:left-auto md:right-auto md:p-0 z-10 md:mb-6">
+        <div className="sticky bottom-0 left-0 right-0 p-3 mt-auto z-20 bg-background/90 backdrop-blur-md border-t border-border/50 md:p-0 md:bg-transparent md:border-none md:backdrop-blur-none md:mt-4 [.is-pip-mode_&]:p-2 [.is-pip-mode_&]:bg-background/95 [.is-pip-mode_&]:border-t">
           <form onSubmit={handleAddTask} className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Plus className="h-5 w-5 text-muted-foreground" />
@@ -153,7 +153,7 @@ export function TaskList({ listId }: TaskListProps) {
               minLength={1}
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 border border-border rounded-xl leading-5 bg-background shadow-lg md:shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+              className="block w-full pl-10 pr-3 py-3 [.is-pip-mode_&]:py-2 border border-border rounded-xl leading-5 bg-background shadow-md md:shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
               placeholder={t('addATask')}
             />
           </form>
