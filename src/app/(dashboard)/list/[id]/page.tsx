@@ -12,7 +12,7 @@ export default function ListPage() {
   
   if (listId === 'all') {
     return (
-      <div className="h-full flex flex-col relative rounded-xl overflow-hidden -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8">
+      <div className="h-full flex flex-col relative p-4 sm:p-6 lg:p-8">
         <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full">
           <div className="mb-6 flex items-center justify-between">
             <div>
@@ -44,7 +44,7 @@ export default function ListPage() {
   }
 
   return (
-    <div className="h-full flex flex-col relative rounded-xl overflow-hidden -m-4 sm:-m-6 lg:-m-8 p-4 sm:p-6 lg:p-8">
+    <div className="h-full flex flex-col relative p-4 sm:p-6 lg:p-8">
       {list.background && (
         <div 
           className="absolute inset-0 z-0 transition-opacity duration-300 pointer-events-none"
