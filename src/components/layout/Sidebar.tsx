@@ -139,6 +139,55 @@ export function Sidebar() {
                 </Link>
               );
             })}
+          {/* Background Settings for active list */}
+          {(() => {
+            const params = useParams();
+            const currentId = params.id as string;
+            const isAll = currentId === 'all' || !currentId;
+            const currentList = lists.find(l => l.id === currentId);
+            const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+            const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                  alert('File quá lớn, hạn chế dưới 2MB');
+                  return;
+                }
+                const base64 = await fileToBase64(file);
+                updateListSettings(currentId, { background: base64 });
+              }
+            };
+
+            if (!currentList || isAll) return null;
+            return (
+              <div className="mt-4 pt-4 border-t border-border/50">
+                <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleUpload} />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-8 text-xs px-2"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <Upload className="w-4 h-4 mr-1" /> Upload Background
+                </Button>
+                <div className="mt-2">
+                  <label className="text-xs font-medium text-muted-foreground block mb-1">
+                    Background Opacity ({Math.round((currentList.bgOpacity ?? 1) * 100)}%)
+                  </label>
+                  <Slider
+                    value={[currentList.bgOpacity ?? 1]}
+                    max={1}
+                    step={0.01}
+                    onValueChange={(val:any) => {
+                      const newVal = Array.isArray(val) ? val[0] : val;
+                      updateListSettings(currentId, { bgOpacity: newVal });
+                    }}
+                  />
+                </div>
+              </div>
+            );
+          })()}
           </nav>
 
           <div className="mt-4 pt-4 border-t border-border/50">
