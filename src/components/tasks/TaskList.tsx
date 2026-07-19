@@ -13,7 +13,6 @@ interface TaskListProps {
 
 export function TaskList({ listId }: TaskListProps) {
   const { tasks, addTask, reorderTasks, statusColors } = useTaskStore();
-  const { tasks, addTask, reorderTasks } = useTaskStore();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const t = useTranslation();
   

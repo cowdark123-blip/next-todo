@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Settings, MoreHorizontal } from 'lucide-react';
 import { ListSettings } from '@/components/layout/ListSettings';
-import { ListSettings } from '@/components/layout/ListSettings';
 import { useTranslation } from '@/lib/i18n';
 import { useTheme } from 'next-themes';
 

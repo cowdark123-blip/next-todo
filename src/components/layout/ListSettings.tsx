@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Settings2, Trash, Palette, Type, Upload, Check, AlertCircle } from 'lucide-react';
+import { Settings2, Trash, Palette, Type, Upload, Check, AlertCircle, MoreHorizontal } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { cn, fileToBase64 } from '@/lib/utils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
