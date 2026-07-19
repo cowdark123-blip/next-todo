@@ -130,7 +130,7 @@ export function Sidebar() {
                      list.icon === 'Star' ? <Star className="w-4 h-4" /> : 
                      list.icon === 'Home' ? <Home className="w-4 h-4" /> : 
                      list.icon === 'ListIcon' ? <ListIcon className="w-4 h-4" /> : 
-                     <ListIcon className="w-4 h-4" />}
+                     (list.icon ? <span className="text-base leading-none">{list.icon}</span> : <ListIcon className="w-4 h-4" />)}
                   </span>
                   <span className="truncate flex-1">{list.name}</span>
                   <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">

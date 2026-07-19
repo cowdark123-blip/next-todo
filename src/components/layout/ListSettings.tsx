@@ -57,10 +57,15 @@ export function ListSettings({ listId }: ListSettingsProps) {
     const file = e.target.files?.[0];
     if (file) {
       try {
+        if (file.size > 2 * 1024 * 1024) {
+          setErrorMsg('Vui lòng chọn ảnh < 2MB để tránh lỗi bộ nhớ!');
+          return;
+        }
         const base64 = await fileToBase64(file);
         updateListSettings(listId, { background: base64 });
       } catch (error) {
         console.error("Error converting file to base64", error);
+        setErrorMsg('Không thể upload ảnh này');
       }
     }
   };
@@ -70,7 +75,7 @@ export function ListSettings({ listId }: ListSettingsProps) {
         <PopoverTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-foreground hover:text-foreground")}>
         <MoreHorizontal className="h-4 w-4" />
       </PopoverTrigger>
-      <PopoverContent className={cn("p-4 transition-all duration-200", showEmojiPicker ? "w-[340px]" : "w-80")} align="end">
+      <PopoverContent className={cn("p-4 transition-all duration-200", showEmojiPicker ? "w-[400px]" : "w-80")} align="end">
         <div className="space-y-4 max-h-[80vh] overflow-y-auto">
           <h4 className="font-medium leading-none mb-4">List Settings</h4>
           
@@ -126,7 +131,7 @@ export function ListSettings({ listId }: ListSettingsProps) {
           </div>
 
           <div className="space-y-3 pt-2">
-            <label className="text-xs font-medium text-muted-foreground flex items-center justify-between">
+            <div className="text-xs font-medium text-muted-foreground flex items-center justify-between">
               <span className="flex items-center gap-2"><Palette className="w-3.5 h-3.5" /> Background Theme</span>
               <div>
                 <input 
@@ -134,13 +139,16 @@ export function ListSettings({ listId }: ListSettingsProps) {
                   accept="image/*" 
                   className="hidden" 
                   ref={fileInputRef} 
-                  onChange={handleFileUpload} 
+                  onChange={(e) => {
+                    handleFileUpload(e);
+                    e.target.value = '';
+                  }} 
                 />
                 <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={() => fileInputRef.current?.click()}>
                   <Upload className="w-3 h-3 mr-1" /> Upload Image
                 </Button>
               </div>
-            </label>
+            </div>
             <div className="flex flex-wrap gap-2">
               {['transparent', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#6366f1'].map((c) => (
                 <button
