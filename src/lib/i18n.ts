@@ -37,8 +37,9 @@ export const translations = {
     addNote: 'Add note',
     
     // Status Colors
+    // Status Colors
     doneStatusColor: 'Done Status Color',
-    inProgressStatusColor: 'In Progress Status Color',
+    in_progressStatusColor: 'In Progress Status Color',
     unfinishedStatusColor: 'Unfinished Status Color',
     
     // Appearance & List Settings
@@ -97,9 +98,10 @@ export const translations = {
     addNote: 'Thêm ghi chú',
     
     // Status Colors
-    doneStatusColor: 'Màu trạng thái Đã xong',
-    inProgressStatusColor: 'Màu trạng thái Đang làm',
-    unfinishedStatusColor: 'Màu trạng thái Chưa làm',
+    // Status Colors
+    doneStatusColor: 'Màu cho trạng thái đã hoàn thành',
+    in_progressStatusColor: 'Màu cho trạng thái đang trong tiến trình',
+    unfinishedStatusColor: 'Màu cho trạng thái chưa hoàn thành',
     
     // Appearance & List Settings
     appearance: 'Giao diện',
