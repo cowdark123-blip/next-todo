@@ -206,8 +206,6 @@ export function Sidebar() {
                     </div>
                   </div>
                 </div>
-              </DialogContent>
-            </Dialog>
           </div>
         </div>
       </aside>
