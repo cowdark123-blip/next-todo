@@ -8,6 +8,7 @@ import { Trash, Type, Check, AlertCircle, MoreHorizontal, AlignLeft } from 'luci
 import { useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { useTranslation } from '@/lib/i18n';
 
 interface ListSettingsProps {
   listId: string;
@@ -23,6 +24,7 @@ export function ListSettings({ listId }: ListSettingsProps) {
   const [editName, setEditName] = useState('');
   const [editDesc, setEditDesc] = useState('');
   const [errorMsg, setErrorMsg] = useState('');
+  const t = useTranslation();
 
   React.useEffect(() => {
     if (list) {
@@ -65,12 +67,12 @@ export function ListSettings({ listId }: ListSettingsProps) {
         </PopoverTrigger>
         <PopoverContent className={cn("p-4 transition-all duration-200", showEmojiPicker ? "w-[400px]" : "w-80")} align="end">
           <div className="space-y-4 max-h-[80vh] overflow-y-auto">
-            <h4 className="font-medium leading-none mb-4">List Settings</h4>
+            <h4 className="font-medium leading-none mb-4">{t('listSettings')}</h4>
 
             {/* List Name */}
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                <Type className="w-3.5 h-3.5" /> List Name
+                <Type className="w-3.5 h-3.5" /> {t('listName')}
               </label>
               <div className="flex gap-2">
                 <input
@@ -94,13 +96,13 @@ export function ListSettings({ listId }: ListSettingsProps) {
             {/* Description */}
             <div className="space-y-2">
               <label className="text-xs font-medium text-muted-foreground flex items-center gap-2">
-                <AlignLeft className="w-3.5 h-3.5" /> Description (subtitle)
+                <AlignLeft className="w-3.5 h-3.5" /> {t('descriptionSubtitle')}
               </label>
               <div className="flex gap-2">
                 <textarea
                   value={editDesc}
                   onChange={(e) => setEditDesc(e.target.value)}
-                  placeholder="Short description below list title…"
+                  placeholder="..."
                   rows={2}
                   className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 resize-none"
                 />
@@ -113,14 +115,14 @@ export function ListSettings({ listId }: ListSettingsProps) {
             {/* Icon */}
             <div className="space-y-2 pt-2 relative">
               <label className="text-xs font-medium text-muted-foreground flex items-center gap-2 mb-2">
-                Icon (Emoji)
+                {t('iconEmoji')}
               </label>
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 flex items-center justify-center bg-muted rounded-md text-xl">
                   {list.icon || '📁'}
                 </div>
                 <Button variant="outline" size="sm" onClick={() => setShowEmojiPicker(!showEmojiPicker)}>
-                  {showEmojiPicker ? 'Close Picker' : 'Choose Emoji'}
+                  {showEmojiPicker ? t('closePicker') : t('chooseEmoji')}
                 </Button>
               </div>
 
@@ -144,18 +146,18 @@ export function ListSettings({ listId }: ListSettingsProps) {
               <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
                 <DialogTrigger className={cn(buttonVariants({ variant: "destructive" }), "w-full")}>
                   <Trash className="w-4 h-4 mr-2" />
-                  Delete List
+                  {t('deleteList')}
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogTitle>{t('areYouSure')}</DialogTitle>
                     <DialogDescription>
-                      This action cannot be undone. This will permanently delete the list "{list.name}" and all of its tasks.
+                      {t('cannotBeUndone')}
                     </DialogDescription>
                   </DialogHeader>
                   <DialogFooter className="mt-4">
-                    <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>Cancel</Button>
-                    <Button variant="destructive" onClick={handleDelete}>Yes, delete list</Button>
+                    <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>{t('cancel')}</Button>
+                    <Button variant="destructive" onClick={handleDelete}>{t('yesDelete')}</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>

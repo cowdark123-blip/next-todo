@@ -170,7 +170,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
                 ? "text-primary bg-primary/10"
                 : "text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100"
             )}
-            title="Add note"
+            title={t('note') as string}
           >
             <FileText className="w-3.5 h-3.5" />
           </button>
@@ -194,7 +194,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
             )}
             {!isSubtask && (
               <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowNotes(!showNotes); }}>
-                <FileText className="w-4 h-4 mr-2" /> {task.notes ? 'Edit note' : 'Add note'}
+                <FileText className="w-4 h-4 mr-2" /> {task.notes ? t('editNote') : t('addNote')}
               </DropdownMenuItem>
             )}
             <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setShowEmojiDialog(true); }}>
@@ -262,7 +262,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         >
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs font-medium text-muted-foreground flex items-center gap-1">
-              <FileText className="w-3 h-3" /> Note
+              <FileText className="w-3 h-3" /> {t('note')}
             </span>
             <button onClick={() => setShowNotes(false)} className="text-muted-foreground hover:text-foreground">
               <X className="w-3.5 h-3.5" />
@@ -276,7 +276,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
               if (e.key === 'Escape') setShowNotes(false);
               if (e.key === 'Enter' && e.ctrlKey) handleSaveNotes();
             }}
-            placeholder="Add a note… (Ctrl+Enter to save)"
+            placeholder={t('addANote') as string}
             rows={3}
             className="w-full text-sm bg-transparent resize-none focus:outline-none text-foreground placeholder:text-muted-foreground"
           />
@@ -285,13 +285,13 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
               onClick={() => setShowNotes(false)}
               className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded"
             >
-              Cancel
+              {t('cancel')}
             </button>
             <button
               onClick={handleSaveNotes}
               className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90 transition-colors"
             >
-              Save
+              {t('save')}
             </button>
           </div>
         </div>

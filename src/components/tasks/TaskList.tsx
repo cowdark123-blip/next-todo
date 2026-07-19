@@ -12,7 +12,7 @@ interface TaskListProps {
 }
 
 export function TaskList({ listId }: TaskListProps) {
-  const { tasks, addTask, reorderTasks, statusColors } = useTaskStore();
+  const { tasks, addTask, reorderTasks, statusColors, lists, specialListSettings } = useTaskStore();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const t = useTranslation();
   
@@ -21,6 +21,10 @@ export function TaskList({ listId }: TaskListProps) {
   const unfinishedTasks = listTasks.filter(t => t.status === 'unfinished');
   const inProgressTasks = listTasks.filter(t => t.status === 'in_progress');
   const doneTasks = listTasks.filter(t => t.status === 'done');
+
+  const textColor = listId === 'all' 
+    ? specialListSettings['all']?.textColor 
+    : (lists.find(l => l.id === listId)?.textColor || specialListSettings[listId]?.textColor);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -95,8 +99,8 @@ export function TaskList({ listId }: TaskListProps) {
         </DndContext>
 
         {listTasks.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-40 text-muted-foreground">
-            <p>{t('noTasks')}</p>
+          <div className="flex flex-col items-center justify-center h-40" style={{ color: textColor || 'currentColor' }}>
+            <p className={!textColor ? "text-muted-foreground" : "font-medium drop-shadow-sm"}>{t('noTasks')}</p>
           </div>
         )}
       </div>

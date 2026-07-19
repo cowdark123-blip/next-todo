@@ -30,6 +30,7 @@ function SidebarBackgroundControls() {
   const pathname = usePathname();
   const { lists, updateListSettings, updateSpecialListSettings, specialListSettings } = useTaskStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslation();
 
   // Extract list ID from pathname /list/[id]
   const match = pathname?.match(/^\/list\/(.+)$/);
@@ -72,7 +73,7 @@ function SidebarBackgroundControls() {
   return (
     <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-1">
-        Appearance
+        {t('appearance')}
       </p>
 
       <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleUpload} />
@@ -84,12 +85,12 @@ function SidebarBackgroundControls() {
         onClick={() => fileInputRef.current?.click()}
       >
         <Upload className="w-4 h-4" />
-        Upload Background
+        {t('uploadBackground')}
       </Button>
 
       {/* Solid color presets */}
       <div className="px-1">
-        <p className="text-xs text-muted-foreground mb-1.5">Solid Color</p>
+        <p className="text-xs text-muted-foreground mb-1.5">{t('solidColor')}</p>
         <div className="flex flex-wrap gap-1.5">
           {['transparent','#0f172a','#1e3a5f','#14532d','#7c2d12','#4c1d95','#831843','#164e63'].map(c => (
             <button
@@ -111,7 +112,7 @@ function SidebarBackgroundControls() {
       {bgValue && bgValue !== 'transparent' && (
         <div className="px-1 space-y-1">
           <label className="text-xs text-muted-foreground flex justify-between">
-            <span>Opacity</span>
+            <span>{t('opacity')}</span>
             <span>{Math.round(bgOpacity * 100)}%</span>
           </label>
           <Slider value={[bgOpacity]} max={1} step={0.01} onValueChange={setOpacity} />
@@ -121,9 +122,16 @@ function SidebarBackgroundControls() {
       {/* Text color */}
       <div className="px-1">
         <p className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1">
-          <Type className="w-3 h-3" /> Text Color
+          <Type className="w-3 h-3" /> {t('textColor')}
         </p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          <input
+            type="color"
+            value={textColor || '#000000'}
+            onChange={(e) => setTextColor(e.target.value)}
+            className="w-6 h-6 rounded-full border-2 border-border p-0 cursor-pointer overflow-hidden outline-none bg-transparent"
+            title={t('customColor') as string}
+          />
           {TEXT_COLORS.map(({ label, value }) => (
             <button
               key={label}
@@ -150,7 +158,7 @@ function SidebarBackgroundControls() {
           onClick={() => setBg('transparent')}
           className="text-xs text-muted-foreground hover:text-destructive px-1 transition-colors"
         >
-          Remove background
+          {t('removeBackground')}
         </button>
       )}
     </div>

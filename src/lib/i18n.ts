@@ -25,11 +25,36 @@ export const translations = {
     removeIcon: 'Remove Icon',
     moveToList: 'Move to List',
     delete: 'Delete',
+    note: 'Note',
+    addANote: 'Add a note… (Ctrl+Enter to save)',
+    save: 'Save',
+    editNote: 'Edit note',
+    addNote: 'Add note',
     
     // Status Colors
     doneStatusColor: 'Done Status Color',
     inProgressStatusColor: 'In Progress Status Color',
     unfinishedStatusColor: 'Unfinished Status Color',
+    
+    // Appearance & List Settings
+    appearance: 'Appearance',
+    uploadBackground: 'Upload Background',
+    solidColor: 'Solid Color',
+    opacity: 'Opacity',
+    textColor: 'Text Color',
+    customColor: 'Custom Color',
+    removeBackground: 'Remove background',
+    listSettings: 'List Settings',
+    listName: 'List Name',
+    descriptionSubtitle: 'Description (subtitle)',
+    iconEmoji: 'Icon (Emoji)',
+    closePicker: 'Close Picker',
+    chooseEmoji: 'Choose Emoji',
+    deleteList: 'Delete List',
+    areYouSure: 'Are you absolutely sure?',
+    cannotBeUndone: 'This action cannot be undone. This will permanently delete the list and all of its tasks.',
+    cancel: 'Cancel',
+    yesDelete: 'Yes, delete list',
   },
   vi: {
     // General
@@ -55,11 +80,36 @@ export const translations = {
     removeIcon: 'Xóa Biểu tượng',
     moveToList: 'Chuyển sang Danh sách',
     delete: 'Xóa',
+    note: 'Ghi chú',
+    addANote: 'Thêm ghi chú… (Ctrl+Enter để lưu)',
+    save: 'Lưu',
+    editNote: 'Sửa ghi chú',
+    addNote: 'Thêm ghi chú',
     
     // Status Colors
     doneStatusColor: 'Màu trạng thái Đã xong',
     inProgressStatusColor: 'Màu trạng thái Đang làm',
     unfinishedStatusColor: 'Màu trạng thái Chưa làm',
+    
+    // Appearance & List Settings
+    appearance: 'Giao diện',
+    uploadBackground: 'Tải ảnh nền lên',
+    solidColor: 'Màu đơn sắc',
+    opacity: 'Độ mờ',
+    textColor: 'Màu chữ',
+    customColor: 'Màu tùy chỉnh',
+    removeBackground: 'Xóa ảnh nền',
+    listSettings: 'Cài đặt danh sách',
+    listName: 'Tên danh sách',
+    descriptionSubtitle: 'Mô tả (dòng phụ)',
+    iconEmoji: 'Biểu tượng (Emoji)',
+    closePicker: 'Đóng bảng',
+    chooseEmoji: 'Chọn Emoji',
+    deleteList: 'Xóa danh sách',
+    areYouSure: 'Bạn có chắc chắn không?',
+    cannotBeUndone: 'Hành động này không thể hoàn tác. Danh sách và mọi công việc bên trong sẽ bị xóa vĩnh viễn.',
+    cancel: 'Hủy',
+    yesDelete: 'Có, xóa danh sách',
   }
 };
 
