@@ -18,14 +18,22 @@ import { Slider } from '@/components/ui/slider';
 // Separate component so hooks are always called at the top level
 function SidebarBackgroundControls() {
   const pathname = usePathname();
-  const { lists, updateListSettings } = useTaskStore();
+  const { lists, updateListSettings, updateSpecialListSettings, specialListSettings } = useTaskStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Extract list ID from pathname: /list/[id]
   const match = pathname?.match(/^\/list\/(.+)$/);
   const currentId = match ? match[1] : null;
-  const isAll = !currentId || currentId === 'all';
-  const currentList = currentId ? lists.find(l => l.id === currentId) : undefined;
+
+  // A "real" list is one stored in lists[] array
+  const realList = currentId ? lists.find(l => l.id === currentId) : undefined;
+  // Special lists: 'all', 'default-1', 'default-2' use specialListSettings
+  const isSpecial = currentId === 'all' || !realList;
+  const specialSettings = currentId ? specialListSettings[currentId] : undefined;
+
+  // Effective bg settings
+  const bgValue = realList?.background || specialSettings?.background;
+  const bgOpacity = realList?.bgOpacity ?? specialSettings?.bgOpacity ?? 1;
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -35,11 +43,26 @@ function SidebarBackgroundControls() {
       return;
     }
     const base64 = await fileToBase64(file);
-    updateListSettings(currentId, { background: base64 });
+    if (isSpecial) {
+      updateSpecialListSettings(currentId, { background: base64 });
+    } else {
+      updateListSettings(currentId, { background: base64 });
+    }
     e.target.value = '';
   };
 
-  if (isAll || !currentList) return null;
+  const handleOpacityChange = (val: number | readonly number[]) => {
+    const v = Array.isArray(val) ? (val as number[])[0] : (val as number);
+    if (!currentId) return;
+    if (isSpecial) {
+      updateSpecialListSettings(currentId, { bgOpacity: v });
+    } else {
+      updateListSettings(currentId, { bgOpacity: v });
+    }
+  };
+
+  // Show on any list page
+  if (!currentId) return null;
 
   return (
     <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
@@ -63,21 +86,20 @@ function SidebarBackgroundControls() {
         Upload Background
       </Button>
 
-      <div className="px-1 space-y-1">
-        <label className="text-xs text-muted-foreground flex justify-between">
-          <span>Opacity</span>
-          <span>{Math.round((currentList.bgOpacity ?? 1) * 100)}%</span>
-        </label>
-        <Slider
-          value={[currentList.bgOpacity ?? 1]}
-          max={1}
-          step={0.01}
-          onValueChange={(val: number | readonly number[]) => {
-            const v = Array.isArray(val) ? (val as number[])[0] : (val as number);
-            updateListSettings(currentId, { bgOpacity: v });
-          }}
-        />
-      </div>
+      {bgValue && (
+        <div className="px-1 space-y-1">
+          <label className="text-xs text-muted-foreground flex justify-between">
+            <span>Opacity</span>
+            <span>{Math.round(bgOpacity * 100)}%</span>
+          </label>
+          <Slider
+            value={[bgOpacity]}
+            max={1}
+            step={0.01}
+            onValueChange={handleOpacityChange}
+          />
+        </div>
+      )}
     </div>
   );
 }

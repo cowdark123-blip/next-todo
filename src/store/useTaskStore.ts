@@ -6,11 +6,14 @@ interface TaskState {
   lists: TodoList[];
   tasks: Task[];
   statusColors: { done: string; in_progress: string; unfinished: string };
+  // Backgrounds for virtual lists (all, default-1, default-2, etc.)
+  specialListSettings: Record<string, { background?: string; bgOpacity?: number }>;
   
   // List Actions
   addList: (name: string, icon?: string, color?: string) => void;
   updateList: (id: string, updates: Partial<TodoList>) => void;
   updateListSettings: (id: string, settings: { background?: string, bgOpacity?: number, icon?: string }) => void;
+  updateSpecialListSettings: (id: string, settings: { background?: string; bgOpacity?: number }) => void;
   deleteList: (id: string) => void;
   updateStatusColors: (colors: Partial<{ done: string; in_progress: string; unfinished: string }>) => void;
   
@@ -32,11 +35,12 @@ export const useTaskStore = create<TaskState>()(
         { id: 'default-2', name: 'Important', icon: '⭐', createdAt: new Date().toISOString() }
       ],
       tasks: [],
+      specialListSettings: {},
       statusColors: {
-    done: '#16a34a', // green-600 for better contrast
-    in_progress: '#2563eb', // blue-600
-    unfinished: '#dc2626' // red-600
-  },
+        done: '#16a34a',
+        in_progress: '#2563eb',
+        unfinished: '#dc2626'
+      },
 
       addList: (name, icon, color) => set((state) => ({
         lists: [
@@ -62,6 +66,13 @@ export const useTaskStore = create<TaskState>()(
         lists: state.lists.map((list) =>
           list.id === id ? { ...list, ...settings } : list
         )
+      })),
+
+      updateSpecialListSettings: (id, settings) => set((state) => ({
+        specialListSettings: {
+          ...state.specialListSettings,
+          [id]: { ...state.specialListSettings[id], ...settings }
+        }
       })),
 
       deleteList: (id) => set((state) => ({
