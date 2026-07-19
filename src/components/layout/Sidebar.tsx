@@ -100,8 +100,10 @@ export function Sidebar() {
                      list.icon === 'ListIcon' ? '📁' : 
                      (list.icon || '📁')}
                   </span>
-                  <span className="truncate">{list.name}</span>
-                  <ListSettings listId={list.id} />
+                  <span className="truncate flex-1">{list.name}</span>
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <ListSettings listId={list.id} />
+                  </div>
                 </Link>
               );
             })}

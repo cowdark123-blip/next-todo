@@ -27,7 +27,6 @@ export default function DashboardPage() {
             <h1 className="text-3xl font-bold tracking-tight">{list.name}</h1>
             <p className="text-muted-foreground mt-1">What are you focusing on today?</p>
           </div>
-          <ListSettings listId="default-1" />
         </div>
         
         <div className="flex-1">

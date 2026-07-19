@@ -57,7 +57,6 @@ export default function ListPage() {
       <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight">{list.name}</h1>
-          <ListSettings listId={listId} />
         </div>
         
         <div className="flex-1">
