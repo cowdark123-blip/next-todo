@@ -6,6 +6,7 @@ export const translations = {
     settings: 'Settings',
     language: 'Language',
     theme: 'Theme',
+    miniMode: 'Mini Mode (PiP)',
     
     // Sidebar
     allTasks: 'All Tasks',
@@ -67,6 +68,7 @@ export const translations = {
     settings: 'Cài đặt',
     language: 'Ngôn ngữ',
     theme: 'Giao diện',
+    miniMode: 'Chế độ thu nhỏ (PiP)',
     
     // Sidebar
     allTasks: 'Tất cả công việc',

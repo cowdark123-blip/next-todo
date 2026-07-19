@@ -17,6 +17,9 @@ interface UiState {
 
   sidebarWidth: number;
   setSidebarWidth: (width: number) => void;
+
+  isPipMode: boolean;
+  setPipMode: (isPip: boolean) => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -37,6 +40,9 @@ export const useUiStore = create<UiState>()(
   
   sidebarWidth: 256,
   setSidebarWidth: (width) => set({ sidebarWidth: width }),
+
+  isPipMode: false,
+  setPipMode: (isPip) => set({ isPipMode: isPip }),
     }),
     {
       name: 'next-todo-ui-storage',
