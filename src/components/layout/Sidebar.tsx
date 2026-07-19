@@ -8,7 +8,7 @@ import { List as ListIcon, Plus, X, Upload, Type } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+
 import { Settings } from 'lucide-react';
 import { ListSettings } from '@/components/layout/ListSettings';
 import { useTranslation } from '@/lib/i18n';
@@ -341,56 +341,63 @@ export function Sidebar() {
               </Button>
             )}
 
-            {/* Global Settings dialog */}
-            <Dialog>
-              <DialogTrigger className="w-full">
-                <div className="flex w-full items-center justify-start px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent mt-2 cursor-pointer transition-colors">
+            {/* Global Settings */}
+            <details className="group mt-2">
+              <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
+                <div className="flex items-center">
                   <Settings className="w-5 h-5 mr-3" />
                   {t('settings')}
                 </div>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t('settings')}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  {/* Language */}
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">{t('language')}</label>
-                    <div className="flex gap-2">
-                      <Button variant={language === 'en' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('en')}>EN</Button>
-                      <Button variant={language === 'vi' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('vi')}>VI</Button>
-                    </div>
-                  </div>
-                  {/* Theme */}
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">{t('theme')}</label>
-                    <div className="flex gap-2 flex-wrap max-w-[200px] justify-end">
-                      {themes.map(th => (
-                        <Button key={th} variant={theme === th ? 'default' : 'outline'} size="sm" onClick={() => setTheme(th)} className="capitalize">
-                          {th.replace('theme-', '')}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-                  {/* Status colours */}
+                <svg className="w-4 h-4 transition-transform group-open:-scale-y-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </summary>
+              <div className="px-3 py-3 space-y-4 bg-muted/30 rounded-lg mt-1 mx-1 border border-border/50">
+                {/* Language */}
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">{t('language')}</label>
+                  <select
+                    value={language}
+                    onChange={(e) => setLanguage(e.target.value as 'en' | 'vi')}
+                    className="bg-background border border-border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer"
+                  >
+                    <option value="en">English</option>
+                    <option value="vi">Tiếng Việt</option>
+                  </select>
+                </div>
+
+                {/* Theme */}
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium">{t('theme')}</label>
+                  <select
+                    value={theme}
+                    onChange={(e) => setTheme(e.target.value)}
+                    className="bg-background border border-border rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer capitalize"
+                  >
+                    {themes.map(th => (
+                      <option key={th} value={th}>
+                        {th.replace('theme-', '')}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Status colours */}
+                <div className="space-y-2">
                   {(['done', 'in_progress', 'unfinished'] as const).map(k => (
-                    <div key={k}>
-                      <label className="text-sm font-medium">{t(`${k}StatusColor` as any)}</label>
-                      <div className="flex gap-2 mt-2">
+                    <div key={k} className="flex items-center justify-between">
+                      <label className="text-xs text-muted-foreground">{t(`${k}StatusColor` as any)}</label>
+                      <div className="flex items-center gap-2">
                         <input
                           type="color"
                           value={statusColors[k]}
                           onChange={(e) => updateStatusColors({ [k]: e.target.value })}
-                          className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
+                          className="w-6 h-6 rounded-full border-none p-0 bg-transparent cursor-pointer overflow-hidden outline-none"
                         />
-                        <span className="text-sm font-mono flex items-center">{statusColors[k]}</span>
                       </div>
                     </div>
                   ))}
                 </div>
-              </DialogContent>
-            </Dialog>
+              </div>
+            </details>
           </div>
         </div>
       </aside>
