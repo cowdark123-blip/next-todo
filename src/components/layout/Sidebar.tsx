@@ -133,6 +133,17 @@ export function Sidebar() {
                 {t('newList')}
               </Button>
             )}
+            <Dialog>
+              <DialogTrigger className="w-full">
+                <div className="flex w-full items-center justify-start px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent mt-2 cursor-pointer transition-colors">
+                  <Settings className="w-5 h-5 mr-3" />
+                  {t('settings')}
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{t('settings')}</DialogTitle>
+                </DialogHeader>
                 <div className="space-y-4 pt-4">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">{t('language')}</label>
@@ -206,6 +217,8 @@ export function Sidebar() {
                     </div>
                   </div>
                 </div>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </aside>
