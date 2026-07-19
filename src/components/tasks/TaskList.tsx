@@ -4,7 +4,8 @@ import { useTaskStore } from '@/store/useTaskStore';
 import { TaskItem } from './TaskItem';
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowDownUp } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/lib/i18n';
 
 interface TaskListProps {
@@ -14,13 +15,24 @@ interface TaskListProps {
 export function TaskList({ listId }: TaskListProps) {
   const { tasks, addTask, reorderTasks, statusColors, lists, specialListSettings } = useTaskStore();
   const [newTaskTitle, setNewTaskTitle] = useState('');
+  const [sortBy, setSortBy] = useState<'manual' | 'starred' | 'name' | 'date'>('manual');
   const t = useTranslation();
   
   const rootTasks = tasks.filter(t => !t.parentId);
   const listTasks = listId === 'all' ? rootTasks : rootTasks.filter(t => t.listId === listId);
-  const unfinishedTasks = listTasks.filter(t => t.status === 'unfinished');
-  const inProgressTasks = listTasks.filter(t => t.status === 'in_progress');
-  const doneTasks = listTasks.filter(t => t.status === 'done');
+  
+  let sortedTasks = [...listTasks];
+  if (sortBy === 'starred') {
+    sortedTasks.sort((a, b) => (b.isImportant ? 1 : 0) - (a.isImportant ? 1 : 0));
+  } else if (sortBy === 'name') {
+    sortedTasks.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortBy === 'date') {
+    sortedTasks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  const unfinishedTasks = sortedTasks.filter(t => t.status === 'unfinished');
+  const inProgressTasks = sortedTasks.filter(t => t.status === 'in_progress');
+  const doneTasks = sortedTasks.filter(t => t.status === 'done');
 
   const textColor = listId === 'all' 
     ? specialListSettings['all']?.textColor 
@@ -52,9 +64,33 @@ export function TaskList({ listId }: TaskListProps) {
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)]">
       <div className="flex-1 overflow-y-auto pr-2 pb-24 space-y-2">
+        {listTasks.length > 0 && (
+          <div className="flex justify-end mb-2">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="text-xs flex items-center gap-1.5 px-2 py-1 rounded-md hover:bg-muted text-muted-foreground transition-colors focus:outline-none bg-background/50 backdrop-blur-sm shadow-sm border border-border/50">
+                <ArrowDownUp className="w-3.5 h-3.5" />
+                {t('sort')}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem onClick={() => setSortBy('manual')} className="flex justify-between">
+                  {t('sortManual')} {sortBy === 'manual' && '✓'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy('starred')} className="flex justify-between">
+                  {t('sortStarred')} {sortBy === 'starred' && '✓'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy('name')} className="flex justify-between">
+                  {t('sortName')} {sortBy === 'name' && '✓'}
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setSortBy('date')} className="flex justify-between">
+                  {t('sortDate')} {sortBy === 'date' && '✓'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
         
         <DndContext 
-          sensors={sensors}
+          sensors={sortBy === 'manual' ? sensors : []}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
         >

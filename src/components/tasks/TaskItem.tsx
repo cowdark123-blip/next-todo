@@ -30,7 +30,10 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
   const notesRef = useRef<HTMLTextAreaElement>(null);
   const t = useTranslation();
 
-  const subtasks = tasks.filter(t => t.parentId === task.id);
+  const subtasks = tasks.filter(t => t.parentId === task.id).sort((a, b) => {
+    const order = { done: 0, in_progress: 1, unfinished: 2 };
+    return order[a.status] - order[b.status];
+  });
 
   const {
     attributes,

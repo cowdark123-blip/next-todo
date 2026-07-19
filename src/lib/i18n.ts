@@ -18,6 +18,11 @@ export const translations = {
     done: 'Done',
     noTasks: 'No tasks yet. Add one below!',
     addATask: 'Add a task',
+    sort: 'Sort',
+    sortManual: 'Manual (Drag & Drop)',
+    sortStarred: 'Starred First',
+    sortName: 'Name (A-Z)',
+    sortDate: 'Date Added',
     
     // TaskItem
     addSubtask: 'Add sub-task',
@@ -73,6 +78,11 @@ export const translations = {
     done: 'Đã xong',
     noTasks: 'Chưa có công việc nào. Hãy thêm ở dưới nhé!',
     addATask: 'Thêm công việc',
+    sort: 'Sắp xếp',
+    sortManual: 'Thủ công (Kéo thả)',
+    sortStarred: 'Có gắn sao',
+    sortName: 'Tên (A-Z)',
+    sortDate: 'Ngày tạo',
     
     // TaskItem
     addSubtask: 'Thêm công việc phụ',
