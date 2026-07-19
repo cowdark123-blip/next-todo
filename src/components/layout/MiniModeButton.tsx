@@ -97,15 +97,14 @@ export function MiniModeButton() {
       pipWindowCache = pipWin;
       setPipMode(true);
 
+      const FIXED_WIDTH = 350;
+      const FIXED_HEIGHT = 600;
       pipWin.addEventListener('resize', () => {
-        const newWidth = Math.max(pipWin.innerWidth, 300);
-        const newHeight = Math.max(pipWin.innerHeight, 350);
-        if (pipWin.innerWidth < 300 || pipWin.innerHeight < 350) {
-          try {
-            pipWin.resizeTo(newWidth, newHeight);
-          } catch (e) {
-            // Browser might block resizeTo
-          }
+        // Lock the window to a fixed size — disable resize
+        try {
+          pipWin.resizeTo(FIXED_WIDTH, FIXED_HEIGHT);
+        } catch (e) {
+          // Browser might block resizeTo
         }
       });
 
