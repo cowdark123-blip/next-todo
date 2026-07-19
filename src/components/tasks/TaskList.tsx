@@ -12,6 +12,7 @@ interface TaskListProps {
 }
 
 export function TaskList({ listId }: TaskListProps) {
+  const { tasks, addTask, reorderTasks, statusColors } = useTaskStore();
   const { tasks, addTask, reorderTasks } = useTaskStore();
   const [newTaskTitle, setNewTaskTitle] = useState('');
   const t = useTranslation();
@@ -56,7 +57,7 @@ export function TaskList({ listId }: TaskListProps) {
         >
           {unfinishedTasks.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium mb-3 flex items-center gap-2" style={{ color: statusColors.unfinished }}>
                 {t('unfinished')} <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{unfinishedTasks.length}</span>
               </h3>
               <SortableContext items={unfinishedTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
@@ -69,7 +70,7 @@ export function TaskList({ listId }: TaskListProps) {
 
           {inProgressTasks.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium mb-3 flex items-center gap-2" style={{ color: statusColors.in_progress }}>
                 {t('inProgress')} <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{inProgressTasks.length}</span>
               </h3>
               <SortableContext items={inProgressTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>
@@ -82,7 +83,7 @@ export function TaskList({ listId }: TaskListProps) {
 
           {doneTasks.length > 0 && (
             <div className="mb-6 opacity-70">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3 flex items-center gap-2">
+              <h3 className="text-sm font-medium mb-3 flex items-center gap-2" style={{ color: statusColors.done }}>
                 {t('done')} <span className="bg-muted px-2 py-0.5 rounded-full text-xs">{doneTasks.length}</span>
               </h3>
               <SortableContext items={doneTasks.map(t => t.id)} strategy={verticalListSortingStrategy}>

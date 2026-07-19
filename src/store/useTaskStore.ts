@@ -33,10 +33,10 @@ export const useTaskStore = create<TaskState>()(
       ],
       tasks: [],
       statusColors: {
-        done: '#22c55e',
-        in_progress: '#3b82f6',
-        unfinished: '#ef4444'
-      },
+    done: '#16a34a', // green-600 for better contrast
+    in_progress: '#2563eb', // blue-600
+    unfinished: '#dc2626' // red-600
+  },
 
       addList: (name, icon, color) => set((state) => ({
         lists: [

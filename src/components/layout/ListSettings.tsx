@@ -67,8 +67,8 @@ export function ListSettings({ listId }: ListSettingsProps) {
 
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-muted-foreground hover:text-foreground")}>
-        <Settings2 className="h-4 w-4" />
+        <PopoverTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-foreground hover:text-foreground")}>
+        <MoreHorizontal className="h-4 w-4" />
       </PopoverTrigger>
       <PopoverContent className={cn("p-4 transition-all duration-200", showEmojiPicker ? "w-[340px]" : "w-80")} align="end">
         <div className="space-y-4 max-h-[80vh] overflow-y-auto">
