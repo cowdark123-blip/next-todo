@@ -142,10 +142,10 @@ export function TaskList({ listId }: TaskListProps) {
       </div>
 
       {listId !== 'all' && (
-        <div className="sticky bottom-0 left-0 right-0 p-3 mt-auto z-20 bg-background/90 backdrop-blur-md border-t border-border/50 md:p-0 md:bg-transparent md:border-none md:backdrop-blur-none md:mt-4 [.is-pip-mode_&]:p-2 [.is-pip-mode_&]:bg-background/95 [.is-pip-mode_&]:border-t">
+        <div className="sticky bottom-0 left-0 right-0 p-3 mt-auto z-20 bg-background/90 backdrop-blur-md border-t border-border/50 md:p-0 md:bg-transparent md:border-none md:backdrop-blur-none md:mt-4 [.is-pip-mode_&]:!p-0 [.is-pip-mode_&]:!border-none [.is-pip-mode_&]:!bg-background">
           <form onSubmit={handleAddTask} className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Plus className="h-5 w-5 text-muted-foreground" />
+            <div className="absolute inset-y-0 left-0 pl-3 [.is-pip-mode_&]:pl-4 flex items-center pointer-events-none">
+              <Plus className="h-5 w-5 [.is-pip-mode_&]:w-4 [.is-pip-mode_&]:h-4 text-muted-foreground" />
             </div>
             <input
               type="text"
@@ -153,7 +153,7 @@ export function TaskList({ listId }: TaskListProps) {
               minLength={1}
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 [.is-pip-mode_&]:py-2 border border-border rounded-xl leading-5 bg-background shadow-md md:shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all"
+              className="block w-full pl-10 pr-3 py-3 [.is-pip-mode_&]:py-3 border border-border rounded-xl leading-5 bg-background shadow-md md:shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all [.is-pip-mode_&]:!rounded-none [.is-pip-mode_&]:!border-x-0 [.is-pip-mode_&]:!border-b-0 [.is-pip-mode_&]:!border-t [.is-pip-mode_&]:!shadow-none [.is-pip-mode_&]:focus:!ring-0 [.is-pip-mode_&]:focus:!border-t-primary"
               placeholder={t('addATask')}
             />
           </form>
