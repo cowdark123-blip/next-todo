@@ -62,8 +62,8 @@ export function TaskList({ listId }: TaskListProps) {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-10rem)] relative">
-      <div className="flex-1 overflow-y-auto pr-2 pb-20 space-y-2">
+    <div className="flex flex-col h-full relative">
+      <div className="flex-1 overflow-y-auto pr-2 pb-24 space-y-2">
         {listTasks.length > 0 && (
           <div className="flex justify-end mb-2">
             <DropdownMenu>
