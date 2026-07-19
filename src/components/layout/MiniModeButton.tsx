@@ -30,7 +30,7 @@ export function PipContainer({ children }: { children: React.ReactNode }) {
 
   if (pipWindow) {
     return createPortal(
-      <div className="h-screen w-screen overflow-hidden bg-background min-w-[280px]">
+      <div className="h-screen w-screen overflow-hidden bg-background min-w-[300px] min-h-[350px]">
         <main className="h-full overflow-y-auto">
           {children}
         </main>
@@ -66,7 +66,7 @@ export function MiniModeButton() {
 
     try {
       const pipWin = await window.documentPictureInPicture!.requestWindow({
-        width: 400,
+        width: 350,
         height: 600,
       });
 
@@ -101,9 +101,11 @@ export function MiniModeButton() {
       pipWin.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
-          if (pipWin.innerWidth < 280) {
+          const newWidth = Math.max(pipWin.innerWidth, 300);
+          const newHeight = Math.max(pipWin.innerHeight, 350);
+          if (pipWin.innerWidth < 300 || pipWin.innerHeight < 350) {
             try {
-              pipWin.resizeTo(280, pipWin.innerHeight);
+              pipWin.resizeTo(newWidth, newHeight);
             } catch (e) {
               // Browser might block resizeTo
             }

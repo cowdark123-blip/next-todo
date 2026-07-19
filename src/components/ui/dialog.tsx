@@ -16,7 +16,7 @@ function DialogTrigger({ ...props }: DialogPrimitive.Trigger.Props) {
 }
 
 function DialogPortal({ ...props }: DialogPrimitive.Portal.Props) {
-  return <DialogPrimitive.Portal data-slot="dialog-portal" {...props} />
+  return <DialogPrimitive.Portal data-slot="dialog-portal" container={typeof window !== 'undefined' ? (window as any).documentPictureInPicture?.window?.document.body : undefined} {...props} />
 }
 
 function DialogClose({ ...props }: DialogPrimitive.Close.Props) {
