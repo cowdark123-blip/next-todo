@@ -28,7 +28,7 @@ export function AddTaskFloating({ listId }: AddTaskFloatingProps) {
       [.is-pip-mode_&]:bottom-4 [.is-pip-mode_&]:px-2">
       <form onSubmit={handleAddTask} className="relative animate-in fade-in slide-in-from-bottom-4 duration-300">
         {/* Floating wrapper: rounded, bordered, shadow in both modes */}
-        <div className="flex items-center bg-background/90 backdrop-blur-md border border-border shadow-lg rounded-2xl overflow-hidden px-3 py-1 transition-all duration-300
+        <div className="flex items-center bg-transparent backdrop-blur-md border border-border shadow-lg rounded-2xl overflow-hidden px-3 py-1 transition-all duration-300
           [.is-pip-mode_&]:px-3 [.is-pip-mode_&]:py-1.5 [.is-pip-mode_&]:shadow-md">
           <Plus className="h-5 w-5 text-muted-foreground mr-2 shrink-0 [.is-pip-mode_&]:w-4 [.is-pip-mode_&]:h-4" />
           <input
