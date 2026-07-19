@@ -280,7 +280,7 @@ export function Sidebar() {
             </Link>
 
             {/* Separator */}
-            <div className="h-px bg-border/50 my-2 mx-2" />
+            <div className="h-px bg-border my-3 mx-2" />
 
             {/* User lists */}
             {lists.map((list) => {
