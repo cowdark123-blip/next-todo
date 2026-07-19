@@ -4,7 +4,7 @@ import React, { useState, useRef } from 'react';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
 import { cn, fileToBase64 } from '@/lib/utils';
-import { Home, Star, Sun, List as ListIcon, Plus, X, Upload } from 'lucide-react';
+import { List as ListIcon, Plus, X, Upload, Type } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -15,70 +15,71 @@ import { useTranslation } from '@/lib/i18n';
 import { useTheme } from 'next-themes';
 import { Slider } from '@/components/ui/slider';
 
-// Separate component so hooks are always called at the top level
+// ── Text-colour presets ──────────────────────────────────────────────────────
+const TEXT_COLORS = [
+  { label: 'Auto', value: '' },
+  { label: 'White', value: '#ffffff' },
+  { label: 'Black', value: '#000000' },
+  { label: 'Light', value: '#f1f5f9' },
+  { label: 'Dark', value: '#1e293b' },
+  { label: 'Yellow', value: '#fde68a' },
+];
+
+// ── Background controls (shown for any /list/* route) ────────────────────────
 function SidebarBackgroundControls() {
   const pathname = usePathname();
   const { lists, updateListSettings, updateSpecialListSettings, specialListSettings } = useTaskStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Extract list ID from pathname: /list/[id]
+  // Extract list ID from pathname /list/[id]
   const match = pathname?.match(/^\/list\/(.+)$/);
   const currentId = match ? match[1] : null;
+  if (!currentId) return null;
 
-  // A "real" list is one stored in lists[] array
-  const realList = currentId ? lists.find(l => l.id === currentId) : undefined;
-  // Special lists: 'all', 'default-1', 'default-2' use specialListSettings
+  const realList = lists.find(l => l.id === currentId);
   const isSpecial = currentId === 'all' || !realList;
-  const specialSettings = currentId ? specialListSettings[currentId] : undefined;
+  const sp = currentId ? specialListSettings[currentId] : undefined;
 
-  // Effective bg settings
-  const bgValue = realList?.background || specialSettings?.background;
-  const bgOpacity = realList?.bgOpacity ?? specialSettings?.bgOpacity ?? 1;
+  const bgValue  = realList?.background  || sp?.background;
+  const bgOpacity = realList?.bgOpacity  ?? sp?.bgOpacity ?? 1;
+  const textColor = realList?.textColor  || sp?.textColor || '';
+
+  const setBg = (bg: string) => {
+    if (isSpecial) updateSpecialListSettings(currentId, { background: bg });
+    else           updateListSettings(currentId, { background: bg });
+  };
+
+  const setOpacity = (val: number | readonly number[]) => {
+    const v = Array.isArray(val) ? (val as number[])[0] : (val as number);
+    if (isSpecial) updateSpecialListSettings(currentId, { bgOpacity: v });
+    else           updateListSettings(currentId, { bgOpacity: v });
+  };
+
+  const setTextColor = (c: string) => {
+    if (isSpecial) updateSpecialListSettings(currentId, { textColor: c });
+    else           updateListSettings(currentId, { textColor: c });
+  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !currentId) return;
-    if (file.size > 2 * 1024 * 1024) {
-      alert('File quá lớn, hãy chọn ảnh dưới 2MB');
-      return;
-    }
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { alert('File quá lớn, hãy chọn ảnh dưới 2MB'); return; }
     const base64 = await fileToBase64(file);
-    if (isSpecial) {
-      updateSpecialListSettings(currentId, { background: base64 });
-    } else {
-      updateListSettings(currentId, { background: base64 });
-    }
+    setBg(base64);
     e.target.value = '';
   };
 
-  const handleOpacityChange = (val: number | readonly number[]) => {
-    const v = Array.isArray(val) ? (val as number[])[0] : (val as number);
-    if (!currentId) return;
-    if (isSpecial) {
-      updateSpecialListSettings(currentId, { bgOpacity: v });
-    } else {
-      updateListSettings(currentId, { bgOpacity: v });
-    }
-  };
-
-  // Show on any list page
-  if (!currentId) return null;
-
   return (
     <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
-      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide px-1">Background</p>
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-1">
+        Appearance
+      </p>
 
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        ref={fileInputRef}
-        onChange={handleUpload}
-      />
+      <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleUpload} />
 
+      {/* Upload button */}
       <Button
-        variant="ghost"
-        size="sm"
+        variant="ghost" size="sm"
         className="w-full justify-start gap-2 text-muted-foreground hover:text-primary"
         onClick={() => fileInputRef.current?.click()}
       >
@@ -86,24 +87,77 @@ function SidebarBackgroundControls() {
         Upload Background
       </Button>
 
-      {bgValue && (
+      {/* Solid color presets */}
+      <div className="px-1">
+        <p className="text-xs text-muted-foreground mb-1.5">Solid Color</p>
+        <div className="flex flex-wrap gap-1.5">
+          {['transparent','#0f172a','#1e3a5f','#14532d','#7c2d12','#4c1d95','#831843','#164e63'].map(c => (
+            <button
+              key={c}
+              title={c}
+              onClick={() => setBg(c)}
+              className={cn(
+                "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none",
+                bgValue === c ? "border-primary scale-110" : "border-transparent",
+                c === 'transparent' ? 'border-border bg-muted/50' : ''
+              )}
+              style={{ backgroundColor: c === 'transparent' ? undefined : c }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Opacity slider (only if bg set) */}
+      {bgValue && bgValue !== 'transparent' && (
         <div className="px-1 space-y-1">
           <label className="text-xs text-muted-foreground flex justify-between">
             <span>Opacity</span>
             <span>{Math.round(bgOpacity * 100)}%</span>
           </label>
-          <Slider
-            value={[bgOpacity]}
-            max={1}
-            step={0.01}
-            onValueChange={handleOpacityChange}
-          />
+          <Slider value={[bgOpacity]} max={1} step={0.01} onValueChange={setOpacity} />
         </div>
+      )}
+
+      {/* Text color */}
+      <div className="px-1">
+        <p className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1">
+          <Type className="w-3 h-3" /> Text Color
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {TEXT_COLORS.map(({ label, value }) => (
+            <button
+              key={label}
+              title={label}
+              onClick={() => setTextColor(value)}
+              className={cn(
+                "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none text-[9px] font-bold",
+                textColor === value ? "border-primary scale-110" : "border-border",
+              )}
+              style={{
+                backgroundColor: value || '#94a3b8',
+                color: value === '#ffffff' || value === '#f1f5f9' || value === '#fde68a' ? '#000' : '#fff'
+              }}
+            >
+              {label === 'Auto' ? 'A' : ''}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Remove background */}
+      {bgValue && bgValue !== 'transparent' && (
+        <button
+          onClick={() => setBg('transparent')}
+          className="text-xs text-muted-foreground hover:text-destructive px-1 transition-colors"
+        >
+          Remove background
+        </button>
       )}
     </div>
   );
 }
 
+// ── Main Sidebar ─────────────────────────────────────────────────────────────
 export function Sidebar() {
   const { lists, addList, statusColors, updateStatusColors } = useTaskStore();
   const { isSidebarOpen, setSidebarOpen, language, setLanguage, sidebarWidth, setSidebarWidth } = useUiStore();
@@ -124,16 +178,11 @@ export function Sidebar() {
       if (newWidth > window.innerWidth / 2) newWidth = window.innerWidth / 2;
       setSidebarWidth(newWidth);
     };
-
-    const handleMouseUp = () => {
-      setIsResizing(false);
-    };
-
+    const handleMouseUp = () => setIsResizing(false);
     if (isResizing) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
@@ -151,7 +200,6 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/20 z-40 md:hidden transition-opacity"
@@ -169,12 +217,14 @@ export function Sidebar() {
           isResizing && "transition-none"
         )}
       >
-        {/* Resizer Handle */}
+        {/* Resizer */}
         <div
           className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 transition-colors"
           onMouseDown={() => setIsResizing(true)}
         />
+
         <div className="flex flex-col h-full w-full p-4 overflow-hidden">
+          {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
               Next To-Do
@@ -184,7 +234,9 @@ export function Sidebar() {
             </Button>
           </div>
 
+          {/* Nav */}
           <nav className="flex-1 overflow-y-auto space-y-1 pr-2">
+            {/* All Tasks link */}
             <Link
               href="/list/all"
               className={cn(
@@ -200,13 +252,13 @@ export function Sidebar() {
               <span className="truncate">{t('allTasks')}</span>
             </Link>
 
+            {/* User lists */}
             {lists.map((list) => {
-              const isActive = pathname === `/list/${list.id}` || (pathname === '/' && list.id === 'default-1');
-
+              const isActive = pathname === `/list/${list.id}`;
               return (
                 <Link
                   key={list.id}
-                  href={list.id === 'default-1' ? '/' : `/list/${list.id}`}
+                  href={`/list/${list.id}`}
                   className={cn(
                     "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
                     "hover:bg-primary/10 group",
@@ -215,11 +267,9 @@ export function Sidebar() {
                   onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                 >
                   <span className={cn("flex flex-shrink-0 items-center justify-center w-5 h-5", isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-70 group-hover:opacity-100 group-hover:text-primary transition-colors")}>
-                    {list.icon === 'Sun' ? <Sun className="w-4 h-4" /> :
-                     list.icon === 'Star' ? <Star className="w-4 h-4" /> :
-                     list.icon === 'Home' ? <Home className="w-4 h-4" /> :
-                     list.icon === 'ListIcon' ? <ListIcon className="w-4 h-4" /> :
-                     (list.icon ? <span className="text-base leading-none">{list.icon}</span> : <ListIcon className="w-4 h-4" />)}
+                    {list.icon
+                      ? <span className="text-base leading-none">{list.icon}</span>
+                      : <ListIcon className="w-4 h-4" />}
                   </span>
                   <span className="truncate flex-1">{list.name}</span>
                   <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
@@ -229,10 +279,11 @@ export function Sidebar() {
               );
             })}
 
-            {/* Background upload controls — only shown on a specific list page */}
+            {/* Background / appearance controls */}
             <SidebarBackgroundControls />
           </nav>
 
+          {/* Bottom actions */}
           <div className="mt-4 pt-4 border-t border-border/50">
             {isAddingList ? (
               <form onSubmit={handleAddList} className="flex flex-col gap-2">
@@ -259,6 +310,8 @@ export function Sidebar() {
                 {t('newList')}
               </Button>
             )}
+
+            {/* Global Settings dialog */}
             <Dialog>
               <DialogTrigger className="w-full">
                 <div className="flex w-full items-center justify-start px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent mt-2 cursor-pointer transition-colors">
@@ -271,77 +324,40 @@ export function Sidebar() {
                   <DialogTitle>{t('settings')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4 pt-4">
+                  {/* Language */}
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">{t('language')}</label>
                     <div className="flex gap-2">
-                      <Button
-                        variant={language === 'en' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setLanguage('en')}
-                      >
-                        EN
-                      </Button>
-                      <Button
-                        variant={language === 'vi' ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => setLanguage('vi')}
-                      >
-                        VI
-                      </Button>
+                      <Button variant={language === 'en' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('en')}>EN</Button>
+                      <Button variant={language === 'vi' ? 'default' : 'outline'} size="sm" onClick={() => setLanguage('vi')}>VI</Button>
                     </div>
                   </div>
+                  {/* Theme */}
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">{t('theme')}</label>
                     <div className="flex gap-2 flex-wrap max-w-[200px] justify-end">
                       {themes.map(th => (
-                        <Button
-                          key={th}
-                          variant={theme === th ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={() => setTheme(th)}
-                          className="capitalize"
-                        >
+                        <Button key={th} variant={theme === th ? 'default' : 'outline'} size="sm" onClick={() => setTheme(th)} className="capitalize">
                           {th.replace('theme-', '')}
                         </Button>
                       ))}
                     </div>
                   </div>
-                  <div>
-                    <label className="text-sm font-medium">{t('doneStatusColor')}</label>
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        type="color"
-                        value={statusColors.done}
-                        onChange={(e) => updateStatusColors({ done: e.target.value })}
-                        className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
-                      />
-                      <span className="text-sm font-mono flex items-center">{statusColors.done}</span>
+                  {/* Status colours */}
+                  {(['done', 'in_progress', 'unfinished'] as const).map(k => (
+                    <div key={k}>
+                      <label className="text-sm font-medium">{t(`${k}StatusColor` as any)}</label>
+                      <div className="flex gap-2 mt-2">
+                        <input
+                          type="color"
+                          value={statusColors[k]}
+                          onChange={(e) => updateStatusColors({ [k]: e.target.value })}
+                          className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
+                        />
+                        <span className="text-sm font-mono flex items-center">{statusColors[k]}</span>
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">{t('inProgressStatusColor')}</label>
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        type="color"
-                        value={statusColors.in_progress}
-                        onChange={(e) => updateStatusColors({ in_progress: e.target.value })}
-                        className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
-                      />
-                      <span className="text-sm font-mono flex items-center">{statusColors.in_progress}</span>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">{t('unfinishedStatusColor')}</label>
-                    <div className="flex gap-2 mt-2">
-                      <input
-                        type="color"
-                        value={statusColors.unfinished}
-                        onChange={(e) => updateStatusColors({ unfinished: e.target.value })}
-                        className="w-8 h-8 rounded border-none p-0 bg-transparent cursor-pointer"
-                      />
-                      <span className="text-sm font-mono flex items-center">{statusColors.unfinished}</span>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </DialogContent>
             </Dialog>

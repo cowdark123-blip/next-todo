@@ -20,5 +20,14 @@ export interface TodoList {
   color?: string;
   background?: string;
   bgOpacity?: number;
+  description?: string;   // Subtitle shown below list name
+  textColor?: string;     // Custom text color for readability on backgrounds
   createdAt: string;
+}
+
+export interface SpecialListSettings {
+  background?: string;
+  bgOpacity?: number;
+  description?: string;
+  textColor?: string;
 }
