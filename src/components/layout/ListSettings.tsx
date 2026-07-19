@@ -147,7 +147,16 @@ export function ListSettings({ listId }: ListSettingsProps) {
             <div className="text-xs font-medium text-muted-foreground flex items-center justify-between">
               <span className="flex items-center gap-2"><Palette className="w-3.5 h-3.5" /> Background Theme</span>
               <div>
-                <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={() => fileInputRef.current?.click()}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 text-xs px-2"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsOpen(true);
+                    fileInputRef.current?.click();
+                  }}
+                >
                   <Upload className="w-3 h-3 mr-1" /> Upload Image
                 </Button>
               </div>
