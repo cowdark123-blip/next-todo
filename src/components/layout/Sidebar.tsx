@@ -16,7 +16,7 @@ import { useTheme } from 'next-themes';
 
 export function Sidebar() {
   const { lists, addList, statusColors, updateStatusColors } = useTaskStore();
-  const { isSidebarOpen, setSidebarOpen, language, setLanguage } = useUiStore();
+  const { isSidebarOpen, setSidebarOpen, language, setLanguage, sidebarWidth, setSidebarWidth } = useUiStore();
   const t = useTranslation();
   const { theme, setTheme, themes } = useTheme();
   const pathname = usePathname();
@@ -24,6 +24,31 @@ export function Sidebar() {
   
   const [newListName, setNewListName] = useState('');
   const [isAddingList, setIsAddingList] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      let newWidth = e.clientX;
+      if (newWidth < 200) newWidth = 200;
+      if (newWidth > window.innerWidth / 2) newWidth = window.innerWidth / 2;
+      setSidebarWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, setSidebarWidth]);
 
   const handleAddList = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,14 +71,21 @@ export function Sidebar() {
       )}
 
       <aside
+        style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
         className={cn(
-          "fixed md:sticky top-0 left-0 z-50 h-screen w-64 flex-shrink-0",
+          "fixed md:sticky top-0 left-0 z-50 h-screen w-64 md:w-[var(--sidebar-width)] flex-shrink-0",
           "bg-background/60 backdrop-blur-xl border-r border-border/50",
           "transition-transform duration-300 ease-in-out",
-          !isSidebarOpen && "-translate-x-full md:translate-x-0 md:w-0 md:opacity-0 md:overflow-hidden"
+          !isSidebarOpen && "-translate-x-full md:translate-x-0 md:!w-0 md:opacity-0 md:overflow-hidden",
+          isResizing && "transition-none"
         )}
       >
-        <div className="flex flex-col h-full w-64 p-4">
+        {/* Resizer Handle */}
+        <div 
+          className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 transition-colors"
+          onMouseDown={() => setIsResizing(true)}
+        />
+        <div className="flex flex-col h-full w-full p-4 overflow-hidden">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
               Next To-Do

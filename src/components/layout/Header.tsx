@@ -13,7 +13,6 @@ export function Header() {
         variant="ghost"
         size="icon"
         onClick={toggleSidebar}
-        className={!isSidebarOpen ? "" : "md:hidden"}
       >
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle sidebar</span>

@@ -14,6 +14,9 @@ interface UiState {
 
   language: 'en' | 'vi';
   setLanguage: (lang: 'en' | 'vi') => void;
+
+  sidebarWidth: number;
+  setSidebarWidth: (width: number) => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -31,6 +34,9 @@ export const useUiStore = create<UiState>()(
 
   language: 'en',
   setLanguage: (lang) => set({ language: lang }),
+  
+  sidebarWidth: 256,
+  setSidebarWidth: (width) => set({ sidebarWidth: width }),
     }),
     {
       name: 'next-todo-ui-storage',
