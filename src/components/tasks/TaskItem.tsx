@@ -121,7 +121,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           <span className="text-base flex-shrink-0 leading-none">{task.icon}</span>
         )}
         <p className={cn(
-          "font-medium truncate transition-all",
+          "font-medium truncate transition-colors",
           isSubtask ? "text-xs" : "text-sm",
           task.status === 'done' && "line-through text-muted-foreground"
         )}>
@@ -142,7 +142,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
       <DropdownMenu>
         <DropdownMenuTrigger
           onClick={(e: React.MouseEvent) => e.stopPropagation()}
-          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all flex-shrink-0 focus:outline-none"
+          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100 transition-colors flex-shrink-0 focus:outline-none"
         >
           <MoreHorizontal className="w-4 h-4" />
         </DropdownMenuTrigger>
@@ -193,7 +193,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
             "p-2 rounded-full transition-colors flex-shrink-0",
             task.isImportant 
               ? "text-yellow-500 hover:bg-yellow-500/10" 
-              : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100"
+              : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100"
           )}
         >
           <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />

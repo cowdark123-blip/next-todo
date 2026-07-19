@@ -1,3 +1,4 @@
+/* Hallmark · macrostructure: Workbench · genre: modern-minimal */
 "use client"
 import React from 'react';
 import { TaskList } from '@/components/tasks/TaskList';

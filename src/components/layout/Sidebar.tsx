@@ -74,7 +74,7 @@ export function Sidebar() {
         style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
         className={cn(
           "fixed md:sticky top-0 left-0 z-50 h-screen w-64 md:w-[var(--sidebar-width)] flex-shrink-0",
-          "bg-background/60 backdrop-blur-xl border-r border-border/50",
+          "bg-muted border-r border-border/50",
           "transition-transform duration-300 ease-in-out",
           !isSidebarOpen && "-translate-x-full md:translate-x-0 md:!w-0 md:opacity-0 md:overflow-hidden",
           isResizing && "transition-none"
@@ -99,7 +99,7 @@ export function Sidebar() {
             <Link
               href="/list/all"
               className={cn(
-                "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
                 "hover:bg-primary/10 group mb-2",
                 pathname === '/list/all' ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
               )}
@@ -119,21 +119,21 @@ export function Sidebar() {
                   key={list.id}
                   href={list.id === 'default-1' ? '/' : `/list/${list.id}`}
                   className={cn(
-                    "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-200",
+                    "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
                     "hover:bg-primary/10 group",
                     isActive ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
                   )}
                   onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                 >
-                  <span className={cn("text-lg leading-none flex items-center justify-center w-5 h-5", isActive ? "opacity-100 grayscale-0" : "opacity-70 grayscale group-hover:opacity-100 group-hover:grayscale-0 transition-all")}>
-                    {list.icon === 'Sun' ? '☀️' : 
-                     list.icon === 'Star' ? '⭐' : 
-                     list.icon === 'Home' ? '🏠' : 
-                     list.icon === 'ListIcon' ? '📁' : 
-                     (list.icon || '📁')}
+                  <span className={cn("flex flex-shrink-0 items-center justify-center w-5 h-5", isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-70 group-hover:opacity-100 group-hover:text-primary transition-colors")}>
+                    {list.icon === 'Sun' ? <Sun className="w-4 h-4" /> : 
+                     list.icon === 'Star' ? <Star className="w-4 h-4" /> : 
+                     list.icon === 'Home' ? <Home className="w-4 h-4" /> : 
+                     list.icon === 'ListIcon' ? <ListIcon className="w-4 h-4" /> : 
+                     <ListIcon className="w-4 h-4" />}
                   </span>
                   <span className="truncate flex-1">{list.name}</span>
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
                     <ListSettings listId={list.id} />
                   </div>
                 </Link>
