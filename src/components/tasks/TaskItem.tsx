@@ -78,7 +78,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
             ? "p-2 ml-4 mb-1 text-sm border border-l-4 border-l-primary/60 rounded-md scale-[0.98] origin-left hover:brightness-105" 
             : "p-3 rounded-lg border-2 hover:shadow-md hover:brightness-110",
           !isSubtask && isDragging && "opacity-50 scale-105 z-50 shadow-xl",
-          task.status === 'done' ? "bg-muted text-muted-foreground" : "bg-background"
+          task.status === 'done' ? "bg-muted/80 backdrop-blur-md text-muted-foreground" : "bg-background/80 backdrop-blur-md"
         )}
       >
         {!isSubtask && (

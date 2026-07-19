@@ -71,7 +71,18 @@ export function ListSettings({ listId }: ListSettingsProps) {
   };
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <>
+      <input 
+        type="file" 
+        accept="image/*" 
+        className="hidden" 
+        ref={fileInputRef} 
+        onChange={(e) => {
+          handleFileUpload(e);
+          e.target.value = '';
+        }} 
+      />
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-foreground hover:text-foreground")}>
         <MoreHorizontal className="h-4 w-4" />
       </PopoverTrigger>
@@ -134,16 +145,6 @@ export function ListSettings({ listId }: ListSettingsProps) {
             <div className="text-xs font-medium text-muted-foreground flex items-center justify-between">
               <span className="flex items-center gap-2"><Palette className="w-3.5 h-3.5" /> Background Theme</span>
               <div>
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="hidden" 
-                  ref={fileInputRef} 
-                  onChange={(e) => {
-                    handleFileUpload(e);
-                    e.target.value = '';
-                  }} 
-                />
                 <Button variant="ghost" size="sm" className="h-6 text-xs px-2" onClick={() => fileInputRef.current?.click()}>
                   <Upload className="w-3 h-3 mr-1" /> Upload Image
                 </Button>
@@ -205,5 +206,6 @@ export function ListSettings({ listId }: ListSettingsProps) {
         </div>
       </PopoverContent>
     </Popover>
+    </>
   );
 }
