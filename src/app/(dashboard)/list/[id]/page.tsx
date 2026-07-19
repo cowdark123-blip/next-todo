@@ -44,7 +44,7 @@ export default function ListPage() {
   }
 
   return (
-    <div className="h-full flex flex-col relative p-4 sm:p-6 lg:p-8">
+    <div className="h-full flex flex-col relative">
       {list.background && (
         <div 
           className="absolute inset-0 z-0 transition-opacity duration-300 pointer-events-none"

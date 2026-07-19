@@ -63,6 +63,8 @@ export function ListSettings({ listId }: ListSettingsProps) {
         }
         const base64 = await fileToBase64(file);
         updateListSettings(listId, { background: base64 });
+        // Keep the settings popover open after successful upload
+        setIsOpen(true);
       } catch (error) {
         console.error("Error converting file to base64", error);
         setErrorMsg('Không thể upload ảnh này');
