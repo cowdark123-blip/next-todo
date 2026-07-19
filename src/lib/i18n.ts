@@ -10,6 +10,7 @@ export const translations = {
     
     // Sidebar
     allTasks: 'All Tasks',
+    important: 'Important',
     newList: 'New List',
     newListName: 'New list name',
     
@@ -72,6 +73,7 @@ export const translations = {
     
     // Sidebar
     allTasks: 'Tất cả công việc',
+    important: 'Quan trọng',
     newList: 'Danh sách mới',
     newListName: 'Tên danh sách mới',
     

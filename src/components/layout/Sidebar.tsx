@@ -260,6 +260,22 @@ export function Sidebar() {
               <span className="truncate">{t('allTasks')}</span>
             </Link>
 
+            {/* Important tasks link */}
+            <Link
+              href="/list/important"
+              className={cn(
+                "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
+                "hover:bg-primary/10 group mb-2",
+                pathname === '/list/important' ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
+              )}
+              onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
+            >
+              <span className={cn(pathname === '/list/important' ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
+                <span className="text-lg leading-none flex items-center justify-center w-5 h-5">⭐</span>
+              </span>
+              <span className="truncate">{t('important')}</span>
+            </Link>
+
             {/* User lists */}
             {lists.map((list) => {
               const isActive = pathname === `/list/${list.id}`;

@@ -18,7 +18,7 @@ export function TaskList({ listId }: TaskListProps) {
   const t = useTranslation();
   
   const rootTasks = tasks.filter(t => !t.parentId);
-  const listTasks = listId === 'all' ? rootTasks : rootTasks.filter(t => t.listId === listId);
+  const listTasks = listId === 'all' ? rootTasks : listId === 'important' ? rootTasks.filter(t => t.isImportant) : rootTasks.filter(t => t.listId === listId);
   
   let sortedTasks = [...listTasks];
   if (sortBy === 'starred') {

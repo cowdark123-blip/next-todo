@@ -6,6 +6,7 @@ import { ListSettings } from '@/components/layout/ListSettings';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useParams } from 'next/navigation';
 import { SpecialListSettings } from '@/types';
+import { useTranslation } from '@/lib/i18n';
 
 function BackgroundLayer({ background, bgOpacity }: { background?: string; bgOpacity?: number }) {
   if (!background || background === 'transparent') return null;
@@ -53,6 +54,7 @@ export default function ListPage() {
   const listId = params.id as string;
   const lists = useTaskStore((state) => state.lists);
   const specialListSettings = useTaskStore((state) => state.specialListSettings);
+  const t = useTranslation();
 
   // ── All Tasks (virtual list) ──────────────────────────────────────────────
   if (listId === 'all') {
@@ -62,12 +64,32 @@ export default function ListPage() {
         <BackgroundLayer background={sp.background} bgOpacity={sp.bgOpacity} />
         <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
           <PageHeader
-            title="All Tasks"
-            description={sp.description || "Here is everything on your plate."}
+            title={t('allTasks') as string}
+            description={sp.description}
             textColor={sp.textColor}
           />
           <div className="flex-1 min-h-0">
             <TaskList listId="all" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Important Tasks (virtual list) ────────────────────────────────────────
+  if (listId === 'important') {
+    const sp: SpecialListSettings = specialListSettings['important'] ?? {};
+    return (
+      <div className="h-full flex flex-col relative">
+        <BackgroundLayer background={sp.background} bgOpacity={sp.bgOpacity} />
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+          <PageHeader
+            title={t('important') as string}
+            description={sp.description}
+            textColor={sp.textColor}
+          />
+          <div className="flex-1 min-h-0">
+            <TaskList listId="important" />
           </div>
         </div>
       </div>
