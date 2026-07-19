@@ -6,7 +6,7 @@ import { useUiStore } from '@/store/useUiStore';
 import { cn, fileToBase64 } from '@/lib/utils';
 import { Home, Star, Sun, List as ListIcon, Plus, X, Upload } from 'lucide-react';
 import Link from 'next/link';
-import { usePathname, useRouter, useParams } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Settings } from 'lucide-react';
@@ -17,11 +17,13 @@ import { Slider } from '@/components/ui/slider';
 
 // Separate component so hooks are always called at the top level
 function SidebarBackgroundControls() {
-  const params = useParams();
-  const currentId = params?.id as string | undefined;
+  const pathname = usePathname();
   const { lists, updateListSettings } = useTaskStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Extract list ID from pathname: /list/[id]
+  const match = pathname?.match(/^\/list\/(.+)$/);
+  const currentId = match ? match[1] : null;
   const isAll = !currentId || currentId === 'all';
   const currentList = currentId ? lists.find(l => l.id === currentId) : undefined;
 
