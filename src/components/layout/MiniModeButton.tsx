@@ -65,9 +65,12 @@ export function MiniModeButton() {
     }
 
     try {
+      const FIXED_WIDTH = 300;
+      const FIXED_HEIGHT = 350;
+
       const pipWin = await window.documentPictureInPicture!.requestWindow({
-        width: 350,
-        height: 600,
+        width: FIXED_WIDTH,
+        height: FIXED_HEIGHT,
       });
 
       // Copy all styles
@@ -97,10 +100,8 @@ export function MiniModeButton() {
       pipWindowCache = pipWin;
       setPipMode(true);
 
-      const FIXED_WIDTH = 350;
-      const FIXED_HEIGHT = 600;
+      // Lock to fixed 300x350 — snap back immediately on any resize attempt
       pipWin.addEventListener('resize', () => {
-        // Lock the window to a fixed size — disable resize
         try {
           pipWin.resizeTo(FIXED_WIDTH, FIXED_HEIGHT);
         } catch (e) {
