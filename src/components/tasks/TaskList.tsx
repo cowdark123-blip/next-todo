@@ -63,7 +63,7 @@ export function TaskList({ listId }: TaskListProps) {
 
   return (
     <div className="flex flex-col h-[calc(100vh-10rem)] relative">
-      <div className="flex-1 overflow-y-auto pr-2 pb-4 space-y-2">
+      <div className="flex-1 overflow-y-auto pr-2 pb-20 space-y-2">
         {listTasks.length > 0 && (
           <div className="flex justify-end mb-2">
             <DropdownMenu>
@@ -139,26 +139,6 @@ export function TaskList({ listId }: TaskListProps) {
             <p className={!textColor ? "text-muted-foreground" : "font-medium drop-shadow-sm"}>{t('noTasks')}</p>
           </div>
         )}
-      </div>
-
-      {listId !== 'all' && (
-        <div className="sticky bottom-0 left-0 right-0 p-3 mt-auto z-20 bg-background/90 backdrop-blur-md border-t border-border/50 md:p-0 md:bg-transparent md:border-none md:backdrop-blur-none md:mt-4 [.is-pip-mode_&]:!p-0 [.is-pip-mode_&]:!border-none [.is-pip-mode_&]:!bg-background">
-          <form onSubmit={handleAddTask} className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 [.is-pip-mode_&]:pl-4 flex items-center pointer-events-none">
-              <Plus className="h-5 w-5 [.is-pip-mode_&]:w-4 [.is-pip-mode_&]:h-4 text-muted-foreground" />
-            </div>
-            <input
-              type="text"
-              maxLength={30}
-              minLength={1}
-              value={newTaskTitle}
-              onChange={(e) => setNewTaskTitle(e.target.value)}
-              className="block w-full pl-10 pr-3 py-3 [.is-pip-mode_&]:py-3 border border-border rounded-xl leading-5 bg-background shadow-md md:shadow-sm placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all [.is-pip-mode_&]:!rounded-none [.is-pip-mode_&]:!border-x-0 [.is-pip-mode_&]:!border-b-0 [.is-pip-mode_&]:!border-t [.is-pip-mode_&]:!shadow-none [.is-pip-mode_&]:focus:!ring-0 [.is-pip-mode_&]:focus:!border-t-primary"
-              placeholder={t('addATask')}
-            />
-          </form>
-        </div>
-      )}
     </div>
   );
 }

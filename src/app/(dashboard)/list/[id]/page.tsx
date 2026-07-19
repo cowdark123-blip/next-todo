@@ -1,6 +1,7 @@
 "use client"
 import React from 'react';
 import { TaskList } from '@/components/tasks/TaskList';
+import { AddTaskFloating } from '@/components/tasks/AddTaskFloating';
 import { ListSettings } from '@/components/layout/ListSettings';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useParams } from 'next/navigation';
@@ -59,7 +60,7 @@ export default function ListPage() {
     return (
       <div className="h-full flex flex-col relative">
         <BackgroundLayer background={sp.background} bgOpacity={sp.bgOpacity} />
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2 pb-24">
           <PageHeader
             title="All Tasks"
             description={sp.description || "Here is everything on your plate."}
@@ -79,7 +80,7 @@ export default function ListPage() {
   if (!list) {
     return (
       <div className="h-full flex flex-col relative">
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2 pb-24">
           <div className="mb-6 animate-pulse [.is-pip-mode_&]:mb-2">
             <div className="h-8 bg-muted rounded w-48 mb-2" />
           </div>
@@ -87,6 +88,7 @@ export default function ListPage() {
             <TaskList listId={listId} />
           </div>
         </div>
+        <AddTaskFloating listId={listId} />
       </div>
     );
   }
@@ -94,7 +96,7 @@ export default function ListPage() {
   return (
     <div className="h-full flex flex-col relative">
       <BackgroundLayer background={list.background} bgOpacity={list.bgOpacity} />
-      <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+      <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2 pb-24">
         <PageHeader
           title={list.name}
           description={list.description}
@@ -105,6 +107,7 @@ export default function ListPage() {
           <TaskList listId={listId} />
         </div>
       </div>
+      <AddTaskFloating listId={listId} />
     </div>
   );
 }
