@@ -70,8 +70,9 @@ function SidebarBackgroundControls() {
           value={[currentList.bgOpacity ?? 1]}
           max={1}
           step={0.01}
-          onValueChange={(val: number[]) => {
-            updateListSettings(currentId, { bgOpacity: val[0] });
+          onValueChange={(val: number | readonly number[]) => {
+            const v = Array.isArray(val) ? (val as number[])[0] : (val as number);
+            updateListSettings(currentId, { bgOpacity: v });
           }}
         />
       </div>

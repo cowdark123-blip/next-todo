@@ -144,16 +144,15 @@ export function ListSettings({ listId }: ListSettingsProps) {
           </div>
 
           <div className="space-y-3 pt-2">
-            <div className="text-xs font-medium text-muted-foreground flex items-center justify-between">
-              <span className="flex items-center gap-2"><Palette className="w-3.5 h-3.5" /> Background Theme</span>
-              </div>
+            <div className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+              <Palette className="w-3.5 h-3.5" /> Background Theme
             </div>
             <div className="flex flex-wrap gap-2">
               {['transparent', '#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6', '#a855f7', '#ec4899', '#14b8a6', '#6366f1'].map((c) => (
                 <button
                   key={c}
                   className={cn(
-                    "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none", 
+                    "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none",
                     list.background === c ? "border-primary" : "border-transparent",
                     c === 'transparent' ? 'border-border bg-muted/50' : ''
                   )}
