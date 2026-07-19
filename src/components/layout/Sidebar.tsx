@@ -287,7 +287,7 @@ export function Sidebar() {
                 onClick={() => setListsCollapsed(c => !c)}
                 className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider opacity-40 hover:opacity-90 transition-opacity cursor-pointer select-none"
               >
-                <span>My Lists</span>
+                <span>{t('myLists')}</span>
                 <svg
                   className={cn("w-3 h-3 transition-transform duration-200", listsCollapsed ? "-rotate-90" : "")}
                   viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
