@@ -71,97 +71,100 @@ function SidebarBackgroundControls() {
   };
 
   return (
-    <div className="mt-3 pt-3 border-t border-border/50 space-y-3">
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-1">
+    <details className="mt-3 pt-3 border-t border-border/50 group">
+      <summary className="text-xs font-semibold text-muted-foreground uppercase tracking-wide px-1 cursor-pointer flex items-center justify-between outline-none list-none [&::-webkit-details-marker]:hidden hover:text-primary transition-colors">
         {t('appearance')}
-      </p>
+        <svg className="w-4 h-4 transition-transform group-open:-scale-y-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </summary>
+      
+      <div className="space-y-3 mt-3">
+        <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleUpload} />
 
-      <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleUpload} />
-
-      {/* Upload button */}
-      <Button
-        variant="ghost" size="sm"
-        className="w-full justify-start gap-2 text-muted-foreground hover:text-primary"
-        onClick={() => fileInputRef.current?.click()}
-      >
-        <Upload className="w-4 h-4" />
-        {t('uploadBackground')}
-      </Button>
-
-      {/* Solid color presets */}
-      <div className="px-1">
-        <p className="text-xs text-muted-foreground mb-1.5">{t('solidColor')}</p>
-        <div className="flex flex-wrap gap-1.5">
-          {['transparent','#0f172a','#1e3a5f','#14532d','#7c2d12','#4c1d95','#831843','#164e63'].map(c => (
-            <button
-              key={c}
-              title={c}
-              onClick={() => setBg(c)}
-              className={cn(
-                "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none",
-                bgValue === c ? "border-primary scale-110" : "border-transparent",
-                c === 'transparent' ? 'border-border bg-muted/50' : ''
-              )}
-              style={{ backgroundColor: c === 'transparent' ? undefined : c }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* Opacity slider (only if bg set) */}
-      {bgValue && bgValue !== 'transparent' && (
-        <div className="px-1 space-y-1">
-          <label className="text-xs text-muted-foreground flex justify-between">
-            <span>{t('opacity')}</span>
-            <span>{Math.round(bgOpacity * 100)}%</span>
-          </label>
-          <Slider value={[bgOpacity]} max={1} step={0.01} onValueChange={setOpacity} />
-        </div>
-      )}
-
-      {/* Text color */}
-      <div className="px-1">
-        <p className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1">
-          <Type className="w-3 h-3" /> {t('textColor')}
-        </p>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <input
-            type="color"
-            value={textColor || '#000000'}
-            onChange={(e) => setTextColor(e.target.value)}
-            className="w-6 h-6 rounded-full border-2 border-border p-0 cursor-pointer overflow-hidden outline-none bg-transparent"
-            title={t('customColor') as string}
-          />
-          {TEXT_COLORS.map(({ label, value }) => (
-            <button
-              key={label}
-              title={label}
-              onClick={() => setTextColor(value)}
-              className={cn(
-                "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none text-[9px] font-bold",
-                textColor === value ? "border-primary scale-110" : "border-border",
-              )}
-              style={{
-                backgroundColor: value || '#94a3b8',
-                color: value === '#ffffff' || value === '#f1f5f9' || value === '#fde68a' ? '#000' : '#fff'
-              }}
-            >
-              {label === 'Auto' ? 'A' : ''}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Remove background */}
-      {bgValue && bgValue !== 'transparent' && (
-        <button
-          onClick={() => setBg('transparent')}
-          className="text-xs text-muted-foreground hover:text-destructive px-1 transition-colors"
+        {/* Upload button */}
+        <Button
+          variant="ghost" size="sm"
+          className="w-full justify-start gap-2 text-muted-foreground hover:text-primary"
+          onClick={() => fileInputRef.current?.click()}
         >
-          {t('removeBackground')}
-        </button>
-      )}
-    </div>
+          <Upload className="w-4 h-4" />
+          {t('uploadBackground')}
+        </Button>
+
+        {/* Solid color presets */}
+        <div className="px-1">
+          <p className="text-xs text-muted-foreground mb-1.5">{t('solidColor')}</p>
+          <div className="flex flex-wrap gap-1.5">
+            {['transparent','#0f172a','#1e3a5f','#14532d','#7c2d12','#4c1d95','#831843','#164e63'].map(c => (
+              <button
+                key={c}
+                title={c}
+                onClick={() => setBg(c)}
+                className={cn(
+                  "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none",
+                  bgValue === c ? "border-primary scale-110" : "border-transparent",
+                  c === 'transparent' ? 'border-border bg-muted/50' : ''
+                )}
+                style={{ backgroundColor: c === 'transparent' ? undefined : c }}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Opacity slider (only if bg set) */}
+        {bgValue && bgValue !== 'transparent' && (
+          <div className="px-1 space-y-1">
+            <label className="text-xs text-muted-foreground flex justify-between">
+              <span>{t('opacity')}</span>
+              <span>{Math.round(bgOpacity * 100)}%</span>
+            </label>
+            <Slider value={[bgOpacity]} max={1} step={0.01} onValueChange={setOpacity} />
+          </div>
+        )}
+
+        {/* Text color */}
+        <div className="px-1">
+          <p className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1">
+            <Type className="w-3 h-3" /> {t('textColor')}
+          </p>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <input
+              type="color"
+              value={textColor || '#000000'}
+              onChange={(e) => setTextColor(e.target.value)}
+              className="w-6 h-6 rounded-full border-2 border-border p-0 cursor-pointer overflow-hidden outline-none bg-transparent"
+              title={t('customColor') as string}
+            />
+            {TEXT_COLORS.map(({ label, value }) => (
+              <button
+                key={label}
+                title={label}
+                onClick={() => setTextColor(value)}
+                className={cn(
+                  "w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 focus:outline-none text-[9px] font-bold",
+                  textColor === value ? "border-primary scale-110" : "border-border",
+                )}
+                style={{
+                  backgroundColor: value || '#94a3b8',
+                  color: value === '#ffffff' || value === '#f1f5f9' || value === '#fde68a' ? '#000' : '#fff'
+                }}
+              >
+                {label === 'Auto' ? 'A' : ''}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Remove background */}
+        {bgValue && bgValue !== 'transparent' && (
+          <button
+            onClick={() => setBg('transparent')}
+            className="text-xs text-muted-foreground hover:text-destructive px-1 transition-colors"
+          >
+            {t('removeBackground')}
+          </button>
+        )}
+      </div>
+    </details>
   );
 }
 
@@ -275,6 +278,9 @@ export function Sidebar() {
               </span>
               <span className="truncate">{t('important')}</span>
             </Link>
+
+            {/* Separator */}
+            <div className="h-px bg-border/50 my-2 mx-2" />
 
             {/* User lists */}
             {lists.map((list) => {
