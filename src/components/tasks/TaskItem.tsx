@@ -139,9 +139,9 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           {task.icon && task.status !== 'done' && (
             <span className="text-base flex-shrink-0 leading-none">{task.icon}</span>
           )}
-          <div className="flex-1 min-w-0">
+          <div className="flex-1 min-w-[60px]">
             <p className={cn(
-              "font-medium truncate transition-colors",
+              "font-medium line-clamp-2 break-words whitespace-normal transition-colors",
               isSubtask ? "text-xs" : "text-sm",
               task.status === 'done' && "line-through text-muted-foreground"
             )}>
