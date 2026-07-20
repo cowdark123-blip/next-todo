@@ -92,7 +92,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
-          "group flex items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none overflow-hidden",
+          "group flex flex-wrap items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none overflow-hidden",
           isSubtask
             ? "p-2 ml-4 mb-1 text-sm border-l-4 border-l-primary/60 rounded bg-muted/30 hover:bg-muted/50"
             : "p-3 [.is-pip-mode_&]:p-1.5 rounded-xl border-2 hover:border-primary transition-colors hover:shadow-sm",
@@ -135,7 +135,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           </button>
         </div>
 
-        <div className="flex-1 min-w-[60px] flex items-center gap-2">
+        <div className="flex-1 min-w-[100px] flex flex-wrap items-center gap-2">
           {task.icon && task.status !== 'done' && (
             <span className="text-base flex-shrink-0 leading-none">{task.icon}</span>
           )}
@@ -155,7 +155,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           {subtasks.length > 0 && (
             <button
               onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
-              className="flex items-center gap-1 text-xs text-muted-foreground ml-2 px-2 py-0.5 bg-muted/80 rounded-full whitespace-nowrap hover:bg-muted transition-colors shrink-0"
+              className="flex items-center gap-1 text-xs text-muted-foreground ml-2 [.is-pip-mode_&]:ml-0 px-2 py-0.5 bg-muted/80 rounded-full whitespace-nowrap hover:bg-muted transition-colors shrink-0"
             >
               {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
               <span>{subtasks.filter(s => s.status === 'done').length}/{subtasks.length}</span>
