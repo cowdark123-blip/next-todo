@@ -92,7 +92,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
-          "group flex items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none",
+          "group flex flex-wrap sm:flex-nowrap items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none",
           isSubtask
             ? "p-2 ml-4 mb-1 text-sm border-l-4 border-l-primary/60 rounded bg-muted/30 hover:bg-muted/50"
             : "p-3 [.is-pip-mode_&]:p-1.5 rounded-xl border-2 hover:border-primary transition-colors hover:shadow-sm",
@@ -135,7 +135,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           </button>
         </div>
 
-        <div className="flex-1 min-w-0 flex items-center gap-2">
+        <div className="flex-1 min-w-[100px] flex items-center gap-2">
           {task.icon && task.status !== 'done' && (
             <span className="text-base flex-shrink-0 leading-none">{task.icon}</span>
           )}
@@ -155,7 +155,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           {subtasks.length > 0 && (
             <button
               onClick={(e) => { e.stopPropagation(); setIsExpanded(!isExpanded); }}
-              className="flex items-center gap-1 text-xs text-muted-foreground ml-2 px-2 py-0.5 bg-muted/80 rounded-full whitespace-nowrap hover:bg-muted transition-colors"
+              className="flex items-center gap-1 text-xs text-muted-foreground ml-2 px-2 py-0.5 bg-muted/80 rounded-full whitespace-nowrap hover:bg-muted transition-colors shrink-0"
             >
               {isExpanded ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
               <span>{subtasks.filter(s => s.status === 'done').length}/{subtasks.length}</span>
@@ -163,21 +163,22 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           )}
         </div>
 
-        {/* Notes toggle button */}
-        {!isSubtask && (
-          <button
-            onClick={(e) => { e.stopPropagation(); setShowNotes(!showNotes); }}
-            className={cn(
-              "p-1.5 rounded-md transition-colors flex-shrink-0",
-              showNotes || task.notes
-                ? "text-primary bg-primary/10"
-                : "text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100"
-            )}
-            title={t('note') as string}
-          >
-            <FileText className="w-3.5 h-3.5" />
-          </button>
-        )}
+        <div className="flex items-center gap-1 ml-auto shrink-0">
+          {/* Notes toggle button */}
+          {!isSubtask && (
+            <button
+              onClick={(e) => { e.stopPropagation(); setShowNotes(!showNotes); }}
+              className={cn(
+                "p-1.5 rounded-md transition-colors flex-shrink-0",
+                showNotes || task.notes
+                  ? "text-primary bg-primary/10"
+                  : "text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100"
+              )}
+              title={t('note') as string}
+            >
+              <FileText className="w-3.5 h-3.5" />
+            </button>
+          )}
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -227,22 +228,23 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {!isSubtask && (
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleTaskImportance(task.id);
-            }}
-            className={cn(
-              "p-2 rounded-full transition-colors flex-shrink-0",
-              task.isImportant
-                ? "text-yellow-500 hover:bg-yellow-500/10"
-                : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100"
-            )}
-          >
-            <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />
-          </button>
-        )}
+          {!isSubtask && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleTaskImportance(task.id);
+              }}
+              className={cn(
+                "p-2 rounded-full transition-colors flex-shrink-0",
+                task.isImportant
+                  ? "text-yellow-500 hover:bg-yellow-500/10"
+                  : "text-muted-foreground hover:text-yellow-500 hover:bg-yellow-500/10 opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-visible:opacity-100"
+              )}
+            >
+              <Star className={cn("w-4 h-4", task.isImportant && "fill-current")} />
+            </button>
+          )}
+        </div>
 
         <Dialog open={showEmojiDialog} onOpenChange={setShowEmojiDialog}>
           <DialogContent className="w-fit p-0 border-none bg-transparent shadow-none" onClick={(e) => e.stopPropagation()}>
