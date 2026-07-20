@@ -443,7 +443,7 @@ export function Sidebar() {
                       onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                     >
                       <Settings className="w-4 h-4 mr-2" />
-                      Edit Profile
+                      Chỉnh sửa hồ sơ
                     </Link>
 
                     <Button

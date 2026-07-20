@@ -50,12 +50,12 @@ function AvatarRing({ src, name, uploading, onClick }: {
             ? <Loader2 className="w-5 h-5 text-white animate-spin" />
             : <>
                 <Upload className="w-4 h-4 text-white" />
-                <span className="text-[10px] text-white font-medium tracking-wide">CHANGE</span>
+                <span className="text-[10px] text-white font-medium tracking-wide">THAY ĐỔI</span>
               </>
           }
         </span>
       </button>
-      <p className="text-xs text-[var(--muted-foreground)]">JPG, PNG, GIF · max 2 MB</p>
+      <p className="text-xs text-[var(--muted-foreground)]">JPG, PNG, GIF · tối đa 2 MB</p>
     </div>
   );
 }
@@ -118,14 +118,14 @@ export default function ProfilePage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim()) { setMessage({ type: 'error', text: 'Full name cannot be empty.' }); return; }
+    if (!fullName.trim()) { setMessage({ type: 'error', text: 'Họ và tên không được để trống.' }); return; }
     setIsSaving(true);
     setMessage(null);
     try {
       await updateProfile({ full_name: fullName.trim(), avatar_url: avatarUrl });
-      setMessage({ type: 'success', text: 'Profile saved successfully.' });
+      setMessage({ type: 'success', text: 'Lưu hồ sơ thành công.' });
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Failed to save profile.' });
+      setMessage({ type: 'error', text: err.message || 'Lỗi khi lưu hồ sơ.' });
     } finally {
       setIsSaving(false);
     }
@@ -136,7 +136,7 @@ export default function ProfilePage() {
     if (!file || !session) return;
 
     if (file.size > 2 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'Image exceeds 2 MB limit. Please choose a smaller file.' });
+      setMessage({ type: 'error', text: 'Ảnh vượt quá giới hạn 2 MB. Vui lòng chọn tệp nhỏ hơn.' });
       return;
     }
 
@@ -151,14 +151,14 @@ export default function ProfilePage() {
 
       const { data } = supabase.storage.from('avatars').getPublicUrl(path);
       setAvatarUrl(data.publicUrl);
-      setMessage({ type: 'success', text: 'Avatar ready — click Save Changes to apply.' });
+      setMessage({ type: 'success', text: 'Đã tải ảnh xong — bấm Lưu Thay Đổi để áp dụng.' });
     } catch (err: any) {
       console.error('Upload error:', err);
       // Show a more actionable error message
       if (err.message?.includes('bucket') || err.statusCode === '404' || err.statusCode === 404) {
-        setMessage({ type: 'error', text: 'Storage bucket not found. Please follow the Supabase Storage setup guide to create the "avatars" public bucket.' });
+        setMessage({ type: 'error', text: 'Không tìm thấy Storage bucket. Vui lòng tạo bucket "avatars" công khai trong Supabase.' });
       } else {
-        setMessage({ type: 'error', text: `Upload failed: ${err.message || 'unknown error'}` });
+        setMessage({ type: 'error', text: `Lỗi tải lên: ${err.message || 'lỗi không xác định'}` });
       }
     } finally {
       setIsUploading(false);
@@ -175,7 +175,7 @@ export default function ProfilePage() {
           className="inline-flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors duration-150 group"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-150" />
-          Back to tasks
+          Quay lại công việc
         </Link>
       </div>
 
@@ -200,7 +200,7 @@ export default function ProfilePage() {
           <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
 
           <div className="mt-4 text-center">
-            <h1 className="text-lg font-semibold text-[var(--foreground)]">{profile?.full_name || 'Your Profile'}</h1>
+            <h1 className="text-lg font-semibold text-[var(--foreground)]">{profile?.full_name || 'Hồ sơ của bạn'}</h1>
             <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{profile?.email}</p>
           </div>
 
@@ -211,12 +211,12 @@ export default function ProfilePage() {
           <form onSubmit={handleSave} className="w-full space-y-4">
             <Field
               id="full-name"
-              label="Full Name"
+              label="Họ và tên"
               icon={User}
               type="text"
               value={fullName}
               onChange={e => setFullName(e.target.value)}
-              placeholder="Your full name"
+              placeholder="Họ và tên của bạn"
               autoComplete="name"
             />
 
@@ -231,7 +231,7 @@ export default function ProfilePage() {
                 readOnly
               />
               <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
-                Managed by Google — cannot be changed here.
+                Quản lý bởi Google — không thể thay đổi tại đây.
               </p>
             </div>
 
@@ -250,7 +250,7 @@ export default function ProfilePage() {
                 transition-all duration-150 flex items-center justify-center gap-2"
             >
               {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
-              {isSaving ? 'Saving…' : 'Save Changes'}
+              {isSaving ? 'Đang lưu…' : 'Lưu Thay Đổi'}
             </button>
           </form>
         </div>
