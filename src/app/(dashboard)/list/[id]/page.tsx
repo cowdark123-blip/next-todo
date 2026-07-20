@@ -33,7 +33,7 @@ interface PageHeaderProps {
 function PageHeader({ title, description, textColor, settings }: PageHeaderProps) {
   const style = textColor ? { color: textColor } : undefined;
   return (
-    <div className="mb-6 flex items-start justify-between gap-4 [.is-pip-mode_&]:mb-2">
+    <div className="mb-6 flex items-start justify-between gap-4 [.is-pip-mode_&]:mb-2 [.is-pip-mode_&]:sticky [.is-pip-mode_&]:top-0 [.is-pip-mode_&]:z-50 [.is-pip-mode_&]:bg-background/80 [.is-pip-mode_&]:backdrop-blur-md [.is-pip-mode_&]:border-b [.is-pip-mode_&]:border-border/50 [.is-pip-mode_&]:pb-2 [.is-pip-mode_&]:pt-2 [.is-pip-mode_&]:-mx-3 [.is-pip-mode_&]:px-3">
       <div>
         <h1 className="text-3xl font-bold tracking-tight drop-shadow-sm [.is-pip-mode_&]:text-xl" style={style}>
           {title}
@@ -62,7 +62,7 @@ export default function ListPage() {
     return (
       <div className="h-full flex flex-col relative">
         <BackgroundLayer background={sp.background} bgOpacity={sp.bgOpacity} />
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:px-3 [.is-pip-mode_&]:py-2">
           <PageHeader
             title={t('allTasks') as string}
             description={sp.description || t('subtitleAll') as string}
@@ -82,7 +82,7 @@ export default function ListPage() {
     return (
       <div className="h-full flex flex-col relative">
         <BackgroundLayer background={sp.background} bgOpacity={sp.bgOpacity} />
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:px-3 [.is-pip-mode_&]:py-2">
           <PageHeader
             title={t('important') as string}
             description={sp.description || t('subtitleImportant') as string}
@@ -102,7 +102,7 @@ export default function ListPage() {
   if (!list) {
     return (
       <div className="h-full flex flex-col relative">
-        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+        <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:px-3 [.is-pip-mode_&]:py-2">
           <div className="mb-6 animate-pulse [.is-pip-mode_&]:mb-2">
             <div className="h-8 bg-muted rounded w-48 mb-2" />
           </div>
@@ -118,7 +118,7 @@ export default function ListPage() {
   return (
     <div className="h-full flex flex-col relative">
       <BackgroundLayer background={list.background} bgOpacity={list.bgOpacity} />
-      <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
+      <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:px-3 [.is-pip-mode_&]:py-2">
         <PageHeader
           title={list.name}
           description={list.description}

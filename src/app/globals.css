@@ -155,3 +155,24 @@
     @apply bg-muted-foreground/50;
   }
 }
+
+/* Custom thin scrollbar for PiP Mode */
+.is-pip-mode *::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.is-pip-mode *::-webkit-scrollbar-track {
+  background: transparent;
+}
+.is-pip-mode *::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted));
+  border-radius: 20px;
+}
+.is-pip-mode *::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground));
+}
+.is-pip-mode {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) transparent;
+}
+
