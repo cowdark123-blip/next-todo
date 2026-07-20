@@ -41,6 +41,10 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   initialize: () => {
+    const state = useAuthStore.getState() as any;
+    if (state._initialized) return;
+    useAuthStore.setState({ _initialized: true } as any);
+
     // Check active sessions and sets up a listener
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
@@ -50,9 +54,15 @@ export const useAuthStore = create<AuthState>((set) => ({
       }
     });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'INITIAL_SESSION') return;
       if (session) {
-        verifySessionWithBackend(session);
+        if (event === 'SIGNED_IN') {
+          verifySessionWithBackend(session);
+        } else {
+          // For TOKEN_REFRESHED, USER_UPDATED, etc, just update the session object silently
+          set({ session });
+        }
       } else {
         set({ session: null, profile: null, isLoading: false });
       }
