@@ -20,6 +20,11 @@ interface UiState {
 
   isPipMode: boolean;
   setPipMode: (isPip: boolean) => void;
+
+  listSortBy: 'manual' | 'name' | 'date';
+  setListSortBy: (sortBy: 'manual' | 'name' | 'date') => void;
+  listSortOrder: 'asc' | 'desc';
+  setListSortOrder: (order: 'asc' | 'desc') => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -35,7 +40,7 @@ export const useUiStore = create<UiState>()(
   activeTaskId: null,
   setActiveTask: (id) => set({ activeTaskId: id }),
 
-  language: 'en',
+  language: 'vi',
   setLanguage: (lang) => set({ language: lang }),
   
   sidebarWidth: 256,
@@ -43,6 +48,12 @@ export const useUiStore = create<UiState>()(
 
   isPipMode: false,
   setPipMode: (isPip) => set({ isPipMode: isPip }),
+
+  listSortBy: 'manual',
+  setListSortBy: (sortBy) => set({ listSortBy: sortBy }),
+  
+  listSortOrder: 'asc',
+  setListSortOrder: (order) => set({ listSortOrder: order }),
     }),
     {
       name: 'next-todo-ui-storage',

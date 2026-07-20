@@ -15,6 +15,7 @@ interface TaskListProps {
 export function TaskList({ listId }: TaskListProps) {
   const { tasks, reorderTasks, statusColors, lists, specialListSettings } = useTaskStore();
   const [sortBy, setSortBy] = useState<'manual' | 'starred' | 'name' | 'date'>('manual');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const t = useTranslation();
   
   const rootTasks = tasks.filter(t => !t.parentId);
@@ -22,11 +23,22 @@ export function TaskList({ listId }: TaskListProps) {
   
   let sortedTasks = [...listTasks];
   if (sortBy === 'starred') {
-    sortedTasks.sort((a, b) => (b.isImportant ? 1 : 0) - (a.isImportant ? 1 : 0));
+    sortedTasks.sort((a, b) => {
+      const diff = (b.isImportant ? 1 : 0) - (a.isImportant ? 1 : 0);
+      return sortOrder === 'asc' ? diff : -diff; // asc: important first
+    });
   } else if (sortBy === 'name') {
-    sortedTasks.sort((a, b) => a.title.localeCompare(b.title));
+    sortedTasks.sort((a, b) => {
+      const diff = a.title.localeCompare(b.title);
+      return sortOrder === 'asc' ? diff : -diff; // asc: A-Z
+    });
   } else if (sortBy === 'date') {
-    sortedTasks.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    sortedTasks.sort((a, b) => {
+      const diff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      return sortOrder === 'asc' ? -diff : diff; // asc: newest first
+    });
+  } else if (sortBy === 'manual' && sortOrder === 'desc') {
+    sortedTasks.reverse();
   }
 
   const unfinishedTasks = sortedTasks.filter(t => t.status === 'unfinished');
@@ -63,17 +75,29 @@ export function TaskList({ listId }: TaskListProps) {
                 {t('sort')}
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => setSortBy('manual')} className="flex justify-between">
-                  {t('sortManual')} {sortBy === 'manual' && '✓'}
+                <DropdownMenuItem onClick={() => {
+                  if (sortBy === 'manual') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  else { setSortBy('manual'); setSortOrder('asc'); }
+                }} className="flex justify-between">
+                  {t('sortManual')} {sortBy === 'manual' && (sortOrder === 'asc' ? '↓' : '↑')}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('starred')} className="flex justify-between">
-                  {t('sortStarred')} {sortBy === 'starred' && '✓'}
+                <DropdownMenuItem onClick={() => {
+                  if (sortBy === 'starred') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  else { setSortBy('starred'); setSortOrder('asc'); }
+                }} className="flex justify-between">
+                  {t('sortStarred')} {sortBy === 'starred' && (sortOrder === 'asc' ? '↓' : '↑')}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('name')} className="flex justify-between">
-                  {t('sortName')} {sortBy === 'name' && '✓'}
+                <DropdownMenuItem onClick={() => {
+                  if (sortBy === 'name') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  else { setSortBy('name'); setSortOrder('asc'); }
+                }} className="flex justify-between">
+                  {t('sortName')} {sortBy === 'name' && (sortOrder === 'asc' ? '↓' : '↑')}
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setSortBy('date')} className="flex justify-between">
-                  {t('sortDate')} {sortBy === 'date' && '✓'}
+                <DropdownMenuItem onClick={() => {
+                  if (sortBy === 'date') setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+                  else { setSortBy('date'); setSortOrder('asc'); }
+                }} className="flex justify-between">
+                  {t('sortDate')} {sortBy === 'date' && (sortOrder === 'asc' ? '↓' : '↑')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

@@ -4,13 +4,14 @@ import React, { useState, useRef } from 'react';
 import { useTaskStore } from '@/store/useTaskStore';
 import { useUiStore } from '@/store/useUiStore';
 import { cn, fileToBase64 } from '@/lib/utils';
-import { List as ListIcon, Plus, X, Upload, Type } from 'lucide-react';
+import { List as ListIcon, Plus, X, Upload, Type, ArrowDownUp } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 import { Settings, LogIn, LogOut } from 'lucide-react';
 import { ListSettings } from '@/components/layout/ListSettings';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/lib/i18n';
 import { useAuthStore } from '@/lib/useAuthStore';
 import { useTheme } from 'next-themes';
@@ -279,7 +280,7 @@ export function Sidebar() {
               <span className="truncate">{t('important')}</span>
             </Link>
 
-            {/* Separator with collapse toggle */}
+            {/* Separator with collapse toggle and sort */}
             <div className="flex items-center gap-2 my-5 mx-1">
               <div className="flex-1 h-px bg-border" />
               <button
@@ -295,11 +296,53 @@ export function Sidebar() {
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
+
+              {/* List Sort Menu */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="text-muted-foreground hover:text-foreground focus:outline-none flex items-center ml-1">
+                  <ArrowDownUp className="w-3 h-3" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => {
+                    if (useUiStore.getState().listSortBy === 'manual') useUiStore.getState().setListSortOrder(useUiStore.getState().listSortOrder === 'asc' ? 'desc' : 'asc');
+                    else useUiStore.getState().setListSortBy('manual');
+                  }} className="flex justify-between">
+                    {t('sortManual')} {useUiStore.getState().listSortBy === 'manual' && (useUiStore.getState().listSortOrder === 'asc' ? '↑' : '↓')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    if (useUiStore.getState().listSortBy === 'name') useUiStore.getState().setListSortOrder(useUiStore.getState().listSortOrder === 'asc' ? 'desc' : 'asc');
+                    else useUiStore.getState().setListSortBy('name');
+                  }} className="flex justify-between">
+                    {t('sortName')} {useUiStore.getState().listSortBy === 'name' && (useUiStore.getState().listSortOrder === 'asc' ? '↑' : '↓')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => {
+                    if (useUiStore.getState().listSortBy === 'date') useUiStore.getState().setListSortOrder(useUiStore.getState().listSortOrder === 'asc' ? 'desc' : 'asc');
+                    else useUiStore.getState().setListSortBy('date');
+                  }} className="flex justify-between">
+                    {t('sortDate')} {useUiStore.getState().listSortBy === 'date' && (useUiStore.getState().listSortOrder === 'asc' ? '↑' : '↓')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              
               <div className="flex-1 h-px bg-border" />
             </div>
 
             {/* User lists */}
-            {!listsCollapsed && lists.map((list) => {
+            {!listsCollapsed && (() => {
+              const { listSortBy, listSortOrder } = useUiStore.getState();
+              const sortedLists = [...lists];
+              if (listSortBy === 'manual') {
+                if (listSortOrder === 'desc') sortedLists.reverse();
+              } else {
+                sortedLists.sort((a, b) => {
+                  let diff = 0;
+                  if (listSortBy === 'name') diff = a.name.localeCompare(b.name);
+                  else if (listSortBy === 'date') diff = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+                  return listSortOrder === 'asc' ? diff : -diff;
+                });
+              }
+              return sortedLists;
+            })().map((list) => {
               const isActive = pathname === `/list/${list.id}`;
               return (
                 <Link
@@ -440,7 +483,7 @@ export function Sidebar() {
                       onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                     >
                       <Settings className="w-4 h-4 mr-2 opacity-70" />
-                      Chỉnh sửa hồ sơ
+                      {t('editProfile')}
                     </Link>
 
                     <Button

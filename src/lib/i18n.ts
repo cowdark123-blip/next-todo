@@ -9,6 +9,7 @@ export const translations = {
     login: 'Login with Google',
     logout: 'Logout',
     profile: 'Profile',
+    editProfile: 'Edit Profile',
     miniMode: 'Mini Mode (PiP)',
     
     // Sidebar
@@ -80,6 +81,7 @@ export const translations = {
     login: 'Đăng nhập Google',
     logout: 'Đăng xuất',
     profile: 'Hồ sơ',
+    editProfile: 'Chỉnh sửa hồ sơ',
     miniMode: 'Chế độ thu nhỏ (PiP)',
     
     // Sidebar
