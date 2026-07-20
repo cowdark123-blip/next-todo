@@ -9,9 +9,10 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
-import { Settings } from 'lucide-react';
+import { Settings, LogIn, LogOut } from 'lucide-react';
 import { ListSettings } from '@/components/layout/ListSettings';
 import { useTranslation } from '@/lib/i18n';
+import { useAuthStore } from '@/lib/useAuthStore';
 import { useTheme } from 'next-themes';
 import { Slider } from '@/components/ui/slider';
 
@@ -175,7 +176,7 @@ export function Sidebar() {
   const t = useTranslation();
   const { theme, setTheme, themes } = useTheme();
   const pathname = usePathname();
-
+  const { session, profile, loginWithGoogle, logout } = useAuthStore();
 
   const [newListName, setNewListName] = useState('');
   const [isAddingList, setIsAddingList] = useState(false);
@@ -415,6 +416,48 @@ export function Sidebar() {
                 </div>
               </div>
             </details>
+
+            {/* Auth UI */}
+            <div className="mt-2">
+              {session ? (
+                <details className="group mt-2">
+                  <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
+                    <div className="flex items-center gap-3">
+                      {profile?.avatar_url ? (
+                        <img src={profile.avatar_url} alt="Avatar" className="w-6 h-6 rounded-full" />
+                      ) : (
+                        <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold">
+                          {profile?.full_name?.charAt(0) || '?'}
+                        </div>
+                      )}
+                      <span className="truncate max-w-[120px]">{profile?.full_name || t('profile')}</span>
+                    </div>
+                    <svg className="w-4 h-4 transition-transform group-open:-scale-y-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </summary>
+                  <div className="px-3 py-2 space-y-2 bg-muted/30 rounded-lg mt-1 mx-1 border border-border/50">
+                    <p className="text-xs text-muted-foreground truncate" title={profile?.email}>{profile?.email}</p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                      onClick={() => logout()}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      {t('logout')}
+                    </Button>
+                  </div>
+                </details>
+              ) : (
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-muted-foreground hover:text-primary mt-2"
+                  onClick={() => loginWithGoogle()}
+                >
+                  <LogIn className="w-5 h-5 mr-3" />
+                  {t('login')}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </aside>

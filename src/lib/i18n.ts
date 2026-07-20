@@ -6,6 +6,9 @@ export const translations = {
     settings: 'Settings',
     language: 'Language',
     theme: 'Theme',
+    login: 'Login with Google',
+    logout: 'Logout',
+    profile: 'Profile',
     miniMode: 'Mini Mode (PiP)',
     
     // Sidebar
@@ -70,6 +73,9 @@ export const translations = {
     settings: 'Cài đặt',
     language: 'Ngôn ngữ',
     theme: 'Giao diện',
+    login: 'Đăng nhập Google',
+    logout: 'Đăng xuất',
+    profile: 'Hồ sơ',
     miniMode: 'Chế độ thu nhỏ (PiP)',
     
     // Sidebar
