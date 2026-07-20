@@ -1,44 +1,131 @@
+/* Hallmark · pre-emit critique: P5 H5 E5 S4 R5 V4
+ * component: profile-settings-page · genre: modern-minimal · theme: Cobalt (adapted to Geist/OKLCH)
+ * macrostructure: Workbench · nav: N/A (inner app page) · motion: tw-animate-css
+ * states: default · hover · focus · active · disabled · loading · error · success
+ * contrast: pass
+ */
+
 "use client"
 
 import { useState, useRef, useEffect } from 'react';
 import { useAuthStore } from '@/lib/useAuthStore';
 import { supabase } from '@/lib/supabase';
-import { Button } from '@/components/ui/button';
-import { Camera, Loader2, ArrowLeft } from 'lucide-react';
+import { Camera, Loader2, ArrowLeft, User, Mail, Check, AlertCircle, Upload } from 'lucide-react';
 import Link from 'next/link';
 
+// ─── helpers ──────────────────────────────────────────────────────────────────
+function getInitials(name: string | undefined | null) {
+  if (!name) return '?';
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+// ─── Avatar ring component ────────────────────────────────────────────────────
+function AvatarRing({ src, name, uploading, onClick }: {
+  src: string; name: string; uploading: boolean; onClick: () => void;
+}) {
+  return (
+    <div className="relative flex flex-col items-center gap-3">
+      <button
+        type="button"
+        onClick={onClick}
+        className="group relative w-24 h-24 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-accent,oklch(0.6_0.2_250))] focus-visible:ring-offset-4 focus-visible:ring-offset-[var(--background)]"
+        aria-label="Change avatar"
+      >
+        {/* Gradient ring */}
+        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-600 opacity-80 group-hover:opacity-100 transition-opacity duration-300 p-[2px]" />
+        {/* Inner circle */}
+        <span className="absolute inset-[2px] rounded-full overflow-hidden bg-[var(--card)]">
+          {src ? (
+            <img src={src} alt={name} className="w-full h-full object-cover" />
+          ) : (
+            <span className="w-full h-full flex items-center justify-center text-2xl font-semibold text-[var(--muted-foreground)] bg-[var(--muted)]">
+              {getInitials(name)}
+            </span>
+          )}
+        </span>
+        {/* Upload overlay */}
+        <span className={`absolute inset-[2px] rounded-full flex flex-col items-center justify-center gap-1 bg-black/60 transition-opacity duration-200
+          ${uploading ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
+          {uploading
+            ? <Loader2 className="w-5 h-5 text-white animate-spin" />
+            : <>
+                <Upload className="w-4 h-4 text-white" />
+                <span className="text-[10px] text-white font-medium tracking-wide">CHANGE</span>
+              </>
+          }
+        </span>
+      </button>
+      <p className="text-xs text-[var(--muted-foreground)]">JPG, PNG, GIF · max 2 MB</p>
+    </div>
+  );
+}
+
+// ─── Input with icon ──────────────────────────────────────────────────────────
+function Field({ id, label, icon: Icon, disabled, ...props }: {
+  id: string; label: string; icon: React.ElementType; disabled?: boolean;
+} & React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label htmlFor={id} className="text-sm font-medium text-[var(--foreground)]">{label}</label>
+      <div className="relative">
+        <Icon className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--muted-foreground)] pointer-events-none" />
+        <input
+          id={id}
+          disabled={disabled}
+          className={`w-full h-11 pl-10 pr-4 rounded-lg border text-sm transition-all duration-150 outline-none
+            bg-[var(--card)] border-[var(--border)] text-[var(--foreground)] placeholder:text-[var(--muted-foreground)]
+            focus-visible:ring-2 focus-visible:ring-[oklch(0.55_0.22_255)] focus-visible:border-transparent
+            disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-[var(--muted)]`}
+          {...props}
+        />
+      </div>
+    </div>
+  );
+}
+
+// ─── Toast banner ─────────────────────────────────────────────────────────────
+function Toast({ type, text }: { type: 'success' | 'error'; text: string }) {
+  const isOk = type === 'success';
+  return (
+    <div className={`flex items-start gap-3 p-3.5 rounded-lg text-sm border
+      ${isOk
+        ? 'bg-green-500/10 border-green-500/25 text-green-400'
+        : 'bg-red-500/10 border-red-500/25 text-red-400'}`}>
+      {isOk
+        ? <Check className="w-4 h-4 mt-0.5 shrink-0" />
+        : <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />}
+      <span>{text}</span>
+    </div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 export default function ProfilePage() {
   const { profile, updateProfile, session } = useAuthStore();
-  const [fullName, setFullName] = useState(profile?.full_name || '');
-  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || '');
-  
+  const [fullName, setFullName] = useState(profile?.full_name ?? '');
+  const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? '');
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
-  
+  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (profile) {
-      setFullName(profile.full_name || '');
-      setAvatarUrl(profile.avatar_url || '');
+      setFullName(profile.full_name ?? '');
+      setAvatarUrl(profile.avatar_url ?? '');
     }
   }, [profile]);
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim()) {
-      setMessage({ type: 'error', text: 'Full name cannot be empty' });
-      return;
-    }
-
+    if (!fullName.trim()) { setMessage({ type: 'error', text: 'Full name cannot be empty.' }); return; }
     setIsSaving(true);
     setMessage(null);
     try {
-      await updateProfile({ full_name: fullName, avatar_url: avatarUrl });
-      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      await updateProfile({ full_name: fullName.trim(), avatar_url: avatarUrl });
+      setMessage({ type: 'success', text: 'Profile saved successfully.' });
     } catch (err: any) {
-      setMessage({ type: 'error', text: err.message || 'Failed to update profile' });
+      setMessage({ type: 'error', text: err.message || 'Failed to save profile.' });
     } finally {
       setIsSaving(false);
     }
@@ -46,133 +133,127 @@ export default function ProfilePage() {
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file || !session) return;
 
-    // Validate size (2MB = 2 * 1024 * 1024 bytes)
     if (file.size > 2 * 1024 * 1024) {
-      setMessage({ type: 'error', text: 'Image must be less than 2MB' });
+      setMessage({ type: 'error', text: 'Image exceeds 2 MB limit. Please choose a smaller file.' });
       return;
     }
 
-    if (!session) return;
-
     setIsUploading(true);
     setMessage(null);
-
     try {
-      // Create a unique file name
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${session.user.id}-${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const ext = file.name.split('.').pop();
+      const path = `${session.user.id}/${Date.now()}.${ext}`;
 
-      const { error: uploadError } = await supabase.storage
-        .from('avatars')
-        .upload(filePath, file);
-
+      const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
       if (uploadError) throw uploadError;
 
-      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
-      
+      const { data } = supabase.storage.from('avatars').getPublicUrl(path);
       setAvatarUrl(data.publicUrl);
-      setMessage({ type: 'success', text: 'Avatar uploaded. Click Save to apply changes.' });
+      setMessage({ type: 'success', text: 'Avatar ready — click Save Changes to apply.' });
     } catch (err: any) {
       console.error('Upload error:', err);
-      setMessage({ type: 'error', text: 'Failed to upload avatar. Make sure the avatars bucket exists and is public.' });
+      // Show a more actionable error message
+      if (err.message?.includes('bucket') || err.statusCode === '404' || err.statusCode === 404) {
+        setMessage({ type: 'error', text: 'Storage bucket not found. Please follow the Supabase Storage setup guide to create the "avatars" public bucket.' });
+      } else {
+        setMessage({ type: 'error', text: `Upload failed: ${err.message || 'unknown error'}` });
+      }
     } finally {
       setIsUploading(false);
-      // Reset input
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
   return (
-    <div className="flex h-screen w-full bg-gray-50 dark:bg-[#1C1C1E] justify-center items-start pt-20">
-      <div className="w-full max-w-xl p-8 space-y-8 bg-white dark:bg-[#2C2C2E] rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800">
-        
-        <div className="flex items-center space-x-4">
-          <Link href="/list/all" className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
-          </Link>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+    <div className="min-h-screen w-full flex flex-col items-center bg-[var(--background)] px-4 py-12">
+      {/* Back link */}
+      <div className="w-full max-w-lg mb-6">
+        <Link
+          href="/list/all"
+          className="inline-flex items-center gap-2 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors duration-150 group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-150" />
+          Back to tasks
+        </Link>
+      </div>
+
+      {/* Card */}
+      <div className="w-full max-w-lg bg-[var(--card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xl">
+
+        {/* Header band */}
+        <div className="relative h-24 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-700 overflow-hidden">
+          <div className="absolute inset-0 opacity-20"
+            style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px)', backgroundSize: '60px 60px' }} />
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-[var(--card)] to-transparent" />
         </div>
 
-        <form onSubmit={handleSave} className="space-y-6">
-          {/* Avatar Section */}
-          <div className="flex flex-col items-center space-y-4">
-            <div 
-              className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-gray-100 dark:border-gray-700 group cursor-pointer"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              {avatarUrl ? (
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-4xl text-gray-400">
-                  {profile?.full_name?.[0]?.toUpperCase() || '?'}
-                </div>
-              )}
-              
-              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                {isUploading ? (
-                  <Loader2 className="w-8 h-8 text-white animate-spin" />
-                ) : (
-                  <Camera className="w-8 h-8 text-white" />
-                )}
-              </div>
-            </div>
-            <input 
-              type="file" 
-              accept="image/*" 
-              className="hidden" 
-              ref={fileInputRef}
-              onChange={handleFileChange}
+        {/* Avatar — floats over the header band */}
+        <div className="flex flex-col items-center -mt-12 px-8 pb-8">
+          <AvatarRing
+            src={avatarUrl}
+            name={fullName || profile?.full_name || ''}
+            uploading={isUploading}
+            onClick={() => fileInputRef.current?.click()}
+          />
+          <input type="file" accept="image/*" className="hidden" ref={fileInputRef} onChange={handleFileChange} />
+
+          <div className="mt-4 text-center">
+            <h1 className="text-lg font-semibold text-[var(--foreground)]">{profile?.full_name || 'Your Profile'}</h1>
+            <p className="text-xs text-[var(--muted-foreground)] mt-0.5">{profile?.email}</p>
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-px bg-[var(--border)] my-6" />
+
+          {/* Form */}
+          <form onSubmit={handleSave} className="w-full space-y-4">
+            <Field
+              id="full-name"
+              label="Full Name"
+              icon={User}
+              type="text"
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder="Your full name"
+              autoComplete="name"
             />
-            <p className="text-xs text-gray-500">Click to change avatar (Max 2MB)</p>
-          </div>
-
-          {/* Form Fields */}
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Full Name
-              </label>
-              <input
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-[#1C1C1E] text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                placeholder="Your full name"
-              />
-            </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
-              </label>
-              <input
+              <Field
+                id="email"
+                label="Email"
+                icon={Mail}
                 type="email"
-                value={profile?.email || ''}
+                value={profile?.email ?? ''}
                 disabled
-                className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                readOnly
               />
-              <p className="text-xs text-gray-500 mt-1">Email is managed by your Google account.</p>
+              <p className="mt-1.5 text-xs text-[var(--muted-foreground)]">
+                Managed by Google — cannot be changed here.
+              </p>
             </div>
-          </div>
 
-          {message && (
-            <div className={`p-4 rounded-lg text-sm ${message.type === 'success' ? 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400'}`}>
-              {message.text}
-            </div>
-          )}
+            {message && <Toast type={message.type} text={message.text} />}
 
-          <Button 
-            type="submit" 
-            disabled={isSaving || isUploading}
-            className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white rounded-lg flex items-center justify-center gap-2"
-          >
-            {isSaving && <Loader2 className="w-5 h-5 animate-spin" />}
-            Save Changes
-          </Button>
-        </form>
+            <button
+              type="submit"
+              disabled={isSaving || isUploading}
+              className="w-full h-11 mt-2 rounded-lg text-sm font-semibold
+                bg-gradient-to-r from-blue-600 to-indigo-600
+                text-white shadow-md shadow-blue-500/20
+                hover:from-blue-500 hover:to-indigo-500
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card)]
+                active:scale-[0.98]
+                disabled:opacity-60 disabled:cursor-not-allowed disabled:scale-100
+                transition-all duration-150 flex items-center justify-center gap-2"
+            >
+              {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
+              {isSaving ? 'Saving…' : 'Save Changes'}
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );
