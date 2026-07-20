@@ -212,17 +212,30 @@ export const useTaskStore = create<TaskState>()(
           bgOpacity: l.bg_opacity || 1,
           createdAt: l.created_at
         })),
-        tasks: data.tasks.map((t: any) => ({
-          id: t.id,
-          listId: t.list_id,
-          parentId: undefined, // Backend doesn't support subtasks yet, simplify
-          title: t.title,
-          status: t.status,
-          completed: t.status === 'done',
-          isImportant: t.important,
-          createdAt: t.created_at,
-          notes: t.notes || ''
-        }))
+        tasks: data.tasks.map((t: any) => {
+          let parsedNotes = t.notes || '';
+          let parentId = undefined;
+          try {
+            if (t.notes && t.notes.startsWith('{"text":')) {
+              const parsed = JSON.parse(t.notes);
+              parsedNotes = parsed.text;
+              parentId = parsed.parentId;
+            }
+          } catch (e) {
+            // keep defaults
+          }
+          return {
+            id: t.id,
+            listId: t.list_id,
+            parentId: parentId,
+            title: t.title,
+            status: t.status,
+            completed: t.status === 'done',
+            isImportant: t.important,
+            createdAt: t.created_at,
+            notes: parsedNotes
+          };
+        })
       })),
 
       syncWithBackend: async () => {
@@ -252,7 +265,7 @@ export const useTaskStore = create<TaskState>()(
                 id: t.id,
                 list_id: t.listId,
                 title: t.title,
-                notes: t.notes,
+                notes: JSON.stringify({ text: t.notes || '', parentId: t.parentId }),
                 status: t.status,
                 important: t.isImportant,
                 created_at: t.createdAt

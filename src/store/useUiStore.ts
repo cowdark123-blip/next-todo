@@ -46,6 +46,10 @@ export const useUiStore = create<UiState>()(
     }),
     {
       name: 'next-todo-ui-storage',
+      partialize: (state) => 
+        Object.fromEntries(
+          Object.entries(state).filter(([key]) => !['isPipMode'].includes(key))
+        ) as UiState,
     }
   )
 );
