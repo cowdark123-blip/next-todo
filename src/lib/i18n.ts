@@ -26,7 +26,7 @@ export const translations = {
     noTasksAll: 'No tasks yet. Add one!',
     noTasksImportant: 'No tasks yet. Add one and star it!',
     subtitleAll: 'All tasks you\'ve added will be here',
-    subtitleImportant: 'All tasks You\'ve starred will be here',
+    subtitleImportant: 'All tasks you\'ve starred will be here',
     addATask: 'Add a task',
     sort: 'Sort',
     sortManual: 'Manual (Drag & Drop)',
