@@ -91,6 +91,16 @@ export const useTaskStore = create<TaskState>()(
           tasks: state.tasks.filter((task) => task.listId !== id),
         }));
         get().syncWithBackend();
+        
+        // Explicit backend delete
+        const { session } = require('@/lib/useAuthStore').useAuthStore.getState();
+        if (session) {
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          fetch(`${API_URL}/sync/list/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${session.access_token}` }
+          }).catch(console.error);
+        }
       },
 
       updateStatusColors: (colors) => set((state) => ({
@@ -129,6 +139,16 @@ export const useTaskStore = create<TaskState>()(
           tasks: state.tasks.filter((task) => task.id !== id && task.parentId !== id),
         }));
         get().syncWithBackend();
+        
+        // Explicit backend delete
+        const { session } = require('@/lib/useAuthStore').useAuthStore.getState();
+        if (session) {
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          fetch(`${API_URL}/sync/task/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${session.access_token}` }
+          }).catch(console.error);
+        }
       },
 
       updateTaskStatus: (id, status) => {
