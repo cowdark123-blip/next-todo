@@ -16,6 +16,7 @@ interface AuthState {
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   initialize: () => void;
+  updateProfile: (updates: { full_name?: string; avatar_url?: string }) => Promise<void>;
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -56,6 +57,28 @@ export const useAuthStore = create<AuthState>((set) => ({
         set({ session: null, profile: null, isLoading: false });
       }
     });
+  },
+
+  updateProfile: async (updates) => {
+    const { session, profile } = useAuthStore.getState();
+    if (!session || !profile) throw new Error('Not authenticated');
+
+    const res = await fetch(`${API_URL}/user/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session.access_token}`
+      },
+      body: JSON.stringify(updates)
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to update profile');
+    }
+
+    const { profile: updatedProfile } = await res.json();
+    set({ profile: updatedProfile });
   },
 }));
 
