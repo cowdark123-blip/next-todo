@@ -33,7 +33,7 @@ interface TaskState {
 
 export const useTaskStore = create<TaskState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       lists: [],
       tasks: [],
       specialListSettings: {},
