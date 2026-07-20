@@ -105,7 +105,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
             {...attributes}
             {...listeners}
             onClick={(e) => e.stopPropagation()}
-            className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-1 -ml-1"
+            className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-1 -ml-1 [.is-pip-mode_&]:hidden"
           >
             <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
           </button>
@@ -163,13 +163,13 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           )}
         </div>
 
-        <div className="flex items-center gap-1 ml-auto shrink-0">
+        <div className="flex items-center gap-1 [.is-pip-mode_&]:gap-0 ml-auto shrink-0">
           {/* Notes toggle button */}
           {!isSubtask && (
             <button
               onClick={(e) => { e.stopPropagation(); setShowNotes(!showNotes); }}
               className={cn(
-                "p-1.5 rounded-md transition-colors flex-shrink-0",
+                "p-1.5 rounded-md transition-colors flex-shrink-0 [.is-pip-mode_&]:hidden",
                 showNotes || task.notes
                   ? "text-primary bg-primary/10"
                   : "text-muted-foreground hover:text-primary hover:bg-primary/10 opacity-0 group-hover:opacity-100"

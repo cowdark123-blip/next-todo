@@ -95,7 +95,7 @@ export function MiniModeButton() {
 
       // Copy theme classes
       pipWin.document.documentElement.className = document.documentElement.className;
-      pipWin.document.body.className = document.body.className + ' is-pip-mode flex items-start justify-start bg-black overflow-hidden m-0 w-screen h-screen';
+      pipWin.document.body.className = document.body.className + ' is-pip-mode flex items-start justify-start bg-background overflow-hidden m-0 w-screen h-screen';
 
       pipWindowCache = pipWin;
       setPipMode(true);
