@@ -65,7 +65,7 @@ export default function ListPage() {
         <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
           <PageHeader
             title={t('allTasks') as string}
-            description={sp.description}
+            description={sp.description || t('subtitleAll') as string}
             textColor={sp.textColor}
           />
           <div className="flex-1 min-h-0">
@@ -85,7 +85,7 @@ export default function ListPage() {
         <div className="relative z-10 flex flex-col h-full max-w-4xl mx-auto w-full p-4 sm:p-6 lg:p-8 [.is-pip-mode_&]:p-2">
           <PageHeader
             title={t('important') as string}
-            description={sp.description}
+            description={sp.description || t('subtitleImportant') as string}
             textColor={sp.textColor}
           />
           <div className="flex-1 min-h-0">

@@ -127,7 +127,9 @@ export function TaskList({ listId }: TaskListProps) {
 
         {listTasks.length === 0 && (
           <div className="flex flex-col items-center justify-center h-40" style={{ color: textColor || 'currentColor' }}>
-            <p className={!textColor ? "text-muted-foreground" : "font-medium drop-shadow-sm"}>{t('noTasks')}</p>
+            <p className={!textColor ? "text-muted-foreground" : "font-medium drop-shadow-sm"}>
+              {listId === 'all' ? t('noTasksAll') as string : listId === 'important' ? t('noTasksImportant') as string : t('noTasks') as string}
+            </p>
           </div>
         )}
       </div>
