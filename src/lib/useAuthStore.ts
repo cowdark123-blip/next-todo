@@ -60,8 +60,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   updateProfile: async (updates) => {
-    const { session, profile } = useAuthStore.getState();
-    if (!session || !profile) throw new Error('Not authenticated');
+    const { session } = useAuthStore.getState();
+    if (!session) throw new Error('Not authenticated');
 
     const res = await fetch(`${API_URL}/user/profile`, {
       method: 'PUT',
