@@ -94,10 +94,10 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         className={cn(
           "group flex items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none",
           isSubtask
-            ? "p-2 ml-4 mb-1 text-sm border border-l-4 border-l-primary/60 rounded-md scale-[0.98] origin-left hover:brightness-105"
-            : "p-3 [.is-pip-mode_&]:p-1.5 rounded-lg border-2 hover:shadow-md hover:brightness-110",
-          !isSubtask && isDragging && "opacity-50 scale-105 z-50 shadow-xl",
-          task.status === 'done' ? "bg-muted/80 backdrop-blur-md text-muted-foreground" : "bg-background/80 backdrop-blur-md"
+            ? "p-2 ml-4 mb-1 text-sm border-l-4 border-l-primary/60 rounded bg-muted/30 hover:bg-muted/50"
+            : "p-3 [.is-pip-mode_&]:p-1.5 rounded-xl border-2 hover:border-primary transition-colors hover:shadow-sm",
+          !isSubtask && isDragging && "opacity-50 scale-105 z-50",
+          task.status === 'done' ? "bg-muted text-muted-foreground border-transparent" : "bg-card border-border"
         )}
       >
         {!isSubtask && (
@@ -111,7 +111,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           </button>
         )}
 
-        <div className="flex items-center gap-1 shrink-0 bg-background/50 p-1 rounded-md border border-border/50 mr-1">
+        <div className="flex items-center gap-1 shrink-0 bg-muted/50 p-1 rounded-lg border border-transparent mr-1">
           <button
             onClick={(e) => handleStatusChange(e, 'unfinished')}
             className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
@@ -260,7 +260,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
       {/* Inline notes editor */}
       {!isSubtask && showNotes && (
         <div
-          className="mt-1 ml-0 bg-background/90 backdrop-blur-sm border border-border rounded-lg p-3 space-y-2"
+          className="mt-2 ml-0 bg-muted/30 border-2 border-border rounded-xl p-3 space-y-2"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-1">

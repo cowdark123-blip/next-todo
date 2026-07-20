@@ -224,7 +224,7 @@ export function Sidebar() {
         style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}
         className={cn(
           "fixed md:sticky top-0 left-0 z-50 h-screen w-64 md:w-[var(--sidebar-width)] flex-shrink-0",
-          "bg-muted border-r border-border/50",
+          "bg-background border-r-[3px] border-border",
           "transition-transform duration-300 ease-in-out",
           !isSidebarOpen && "-translate-x-full md:translate-x-0 md:!w-0 md:opacity-0 md:overflow-hidden",
           isResizing && "transition-none"
@@ -232,17 +232,17 @@ export function Sidebar() {
       >
         {/* Resizer */}
         <div
-          className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/50 active:bg-primary z-50 transition-colors"
+          className="hidden md:block absolute top-0 right-0 w-1.5 h-full cursor-col-resize hover:bg-primary/20 active:bg-primary z-50 transition-colors"
           onMouseDown={() => setIsResizing(true)}
         />
 
         <div className="flex flex-col h-full w-full p-4 overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+          <div className="flex items-center justify-between mb-8 px-2">
+            <h1 className="text-xl font-extrabold text-foreground tracking-tight">
               Next To-Do
             </h1>
-            <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(false)}>
+            <Button variant="ghost" size="icon" className="md:hidden text-foreground" onClick={() => setSidebarOpen(false)}>
               <X className="w-5 h-5" />
             </Button>
           </div>
@@ -253,13 +253,12 @@ export function Sidebar() {
             <Link
               href="/list/all"
               className={cn(
-                "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
-                "hover:bg-primary/10 group mb-2",
-                pathname === '/list/all' ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
+                "flex items-center space-x-3 px-3 py-2.5 rounded-md transition-colors duration-200 mb-1",
+                pathname === '/list/all' ? "bg-primary text-primary-foreground font-bold shadow-sm" : "text-foreground/80 hover:bg-muted font-medium hover:text-foreground"
               )}
               onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
             >
-              <span className={cn(pathname === '/list/all' ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
+              <span className={cn(pathname === '/list/all' ? "text-primary-foreground" : "text-muted-foreground")}>
                 <span className="text-lg leading-none flex items-center justify-center w-5 h-5">📋</span>
               </span>
               <span className="truncate">{t('allTasks')}</span>
@@ -269,24 +268,23 @@ export function Sidebar() {
             <Link
               href="/list/important"
               className={cn(
-                "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
-                "hover:bg-primary/10 group mb-2",
-                pathname === '/list/important' ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
+                "flex items-center space-x-3 px-3 py-2.5 rounded-md transition-colors duration-200 mb-2",
+                pathname === '/list/important' ? "bg-primary text-primary-foreground font-bold shadow-sm" : "text-foreground/80 hover:bg-muted font-medium hover:text-foreground"
               )}
               onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
             >
-              <span className={cn(pathname === '/list/important' ? "text-primary" : "text-muted-foreground group-hover:text-primary transition-colors")}>
+              <span className={cn(pathname === '/list/important' ? "text-primary-foreground" : "text-muted-foreground")}>
                 <span className="text-lg leading-none flex items-center justify-center w-5 h-5">⭐</span>
               </span>
               <span className="truncate">{t('important')}</span>
             </Link>
 
             {/* Separator with collapse toggle */}
-            <div className="flex items-center gap-2 my-3 mx-1">
-              <div className="flex-1 h-px bg-current opacity-20" />
+            <div className="flex items-center gap-2 my-5 mx-1">
+              <div className="flex-1 h-px bg-border" />
               <button
                 onClick={() => setListsCollapsed(c => !c)}
-                className="flex items-center gap-1 text-xs font-semibold uppercase tracking-wider opacity-40 hover:opacity-90 transition-opacity cursor-pointer select-none"
+                className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors cursor-pointer select-none"
               >
                 <span>{t('myLists')}</span>
                 <svg
@@ -297,7 +295,7 @@ export function Sidebar() {
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
-              <div className="flex-1 h-px bg-current opacity-20" />
+              <div className="flex-1 h-px bg-border" />
             </div>
 
             {/* User lists */}
@@ -308,19 +306,18 @@ export function Sidebar() {
                   key={list.id}
                   href={`/list/${list.id}`}
                   className={cn(
-                    "flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors duration-200",
-                    "hover:bg-primary/10 group",
-                    isActive ? "bg-primary/15 text-primary font-medium" : "text-muted-foreground"
+                    "flex items-center space-x-3 px-3 py-2.5 rounded-md transition-colors duration-200 group mb-1",
+                    isActive ? "bg-primary text-primary-foreground font-bold shadow-sm" : "text-foreground/80 hover:bg-muted font-medium hover:text-foreground"
                   )}
                   onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                 >
-                  <span className={cn("flex flex-shrink-0 items-center justify-center w-5 h-5", isActive ? "text-primary opacity-100" : "text-muted-foreground opacity-70 group-hover:opacity-100 group-hover:text-primary transition-colors")}>
+                  <span className={cn("flex flex-shrink-0 items-center justify-center w-5 h-5", isActive ? "text-primary-foreground opacity-100" : "text-muted-foreground opacity-70 group-hover:opacity-100 transition-colors")}>
                     {list.icon
                       ? <span className="text-base leading-none">{list.icon}</span>
                       : <ListIcon className="w-4 h-4" />}
                   </span>
                   <span className="truncate flex-1">{list.name}</span>
-                  <div className="opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200">
+                  <div className={cn("opacity-0 focus-within:opacity-100 transition-opacity duration-200", isActive ? "opacity-100" : "group-hover:opacity-100")}>
                     <ListSettings listId={list.id} />
                   </div>
                 </Link>
@@ -344,14 +341,14 @@ export function Sidebar() {
                   value={newListName}
                   onChange={(e) => setNewListName(e.target.value)}
                   placeholder={t('newListName')}
-                  className="w-full px-3 py-2 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                  className="w-full px-3 py-2 text-sm bg-background border-2 border-border rounded-md focus:outline-none focus:border-primary transition-colors"
                   onBlur={() => !newListName && setIsAddingList(false)}
                 />
               </form>
             ) : (
               <Button
                 variant="ghost"
-                className="w-full justify-start text-muted-foreground hover:text-primary"
+                className="w-full justify-start text-foreground/80 hover:bg-muted hover:text-foreground font-medium"
                 onClick={() => setIsAddingList(true)}
               >
                 <Plus className="w-5 h-5 mr-3" />
@@ -361,14 +358,14 @@ export function Sidebar() {
 
             {/* Global Settings */}
             <details className="group mt-2">
-              <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
+              <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-foreground/80 hover:text-foreground hover:bg-muted cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
                 <div className="flex items-center">
-                  <Settings className="w-5 h-5 mr-3" />
+                  <Settings className="w-5 h-5 mr-3 opacity-70" />
                   {t('settings')}
                 </div>
-                <svg className="w-4 h-4 transition-transform group-open:-scale-y-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                <svg className="w-4 h-4 transition-transform group-open:-scale-y-100 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
               </summary>
-              <div className="px-3 py-3 space-y-4 bg-muted/30 rounded-lg mt-1 mx-1 border border-border/50">
+              <div className="px-3 py-3 space-y-4 bg-muted/50 rounded-lg mt-1 mx-1 border-2 border-border">
                 {/* Language */}
                 <div className="flex items-center justify-between">
                   <label className="text-sm font-medium">{t('language')}</label>
@@ -421,28 +418,28 @@ export function Sidebar() {
             <div className="mt-2">
               {session ? (
                 <details className="group mt-2">
-                  <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-primary hover:bg-accent cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
+                  <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-foreground/80 hover:text-foreground hover:bg-muted cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
                     <div className="flex items-center gap-3">
                       {profile?.avatar_url ? (
-                        <img src={profile.avatar_url} alt="Avatar" className="w-6 h-6 rounded-full" />
+                        <img src={profile.avatar_url} alt="Avatar" className="w-6 h-6 rounded-full ring-2 ring-border" />
                       ) : (
-                        <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center text-[10px] font-bold">
+                        <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-primary-foreground">
                           {profile?.full_name?.charAt(0) || '?'}
                         </div>
                       )}
                       <span className="truncate max-w-[120px]">{profile?.full_name || t('profile')}</span>
                     </div>
-                    <svg className="w-4 h-4 transition-transform group-open:-scale-y-100" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    <svg className="w-4 h-4 transition-transform group-open:-scale-y-100 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </summary>
-                  <div className="px-3 py-2 space-y-2 bg-muted/30 rounded-lg mt-1 mx-1 border border-border/50">
+                  <div className="px-3 py-2 space-y-2 bg-muted/50 rounded-lg mt-1 mx-1 border-2 border-border">
                     <p className="text-xs text-muted-foreground truncate" title={profile?.email}>{profile?.email}</p>
                     
                     <Link
                       href="/profile"
-                      className="w-full flex items-center text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 h-8 px-2 rounded-md transition-colors"
+                      className="w-full flex items-center text-sm font-medium text-foreground/80 hover:text-foreground hover:bg-background h-8 px-2 rounded-md transition-colors border border-transparent hover:border-border"
                       onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
                     >
-                      <Settings className="w-4 h-4 mr-2" />
+                      <Settings className="w-4 h-4 mr-2 opacity-70" />
                       Chỉnh sửa hồ sơ
                     </Link>
 

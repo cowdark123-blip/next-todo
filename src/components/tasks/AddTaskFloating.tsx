@@ -26,7 +26,7 @@ export function AddTaskFloating({ listId }: AddTaskFloatingProps) {
   return (
     <div className="absolute bottom-6 left-0 right-0 px-4 w-full max-w-4xl mx-auto z-30 transition-all duration-300">
       <form onSubmit={handleAddTask} className="relative animate-in fade-in slide-in-from-bottom-4 duration-300">
-        <div className="flex items-center bg-background/30 backdrop-blur-md border border-border shadow-lg rounded-2xl overflow-hidden px-3 py-1 transition-all duration-300">
+        <div className="flex items-center bg-background border-[3px] border-border rounded-xl overflow-hidden px-4 py-2 transition-all duration-300 focus-within:border-primary">
           <Plus className="h-5 w-5 text-muted-foreground mr-2 shrink-0" />
           <input
             type="text"

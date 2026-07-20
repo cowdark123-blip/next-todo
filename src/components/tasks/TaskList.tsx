@@ -7,7 +7,7 @@ import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrate
 import { Plus, ArrowDownUp } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTranslation } from '@/lib/i18n';
-
+import { cn } from '@/lib/utils';
 interface TaskListProps {
   listId: string;
 }
@@ -126,10 +126,16 @@ export function TaskList({ listId }: TaskListProps) {
         </DndContext>
 
         {listTasks.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-40" style={{ color: textColor || 'currentColor' }}>
-            <p className={!textColor ? "text-muted-foreground" : "font-medium drop-shadow-sm"}>
+          <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-border rounded-xl mt-8 bg-muted/20" style={{ color: textColor || 'currentColor' }}>
+            <p className={cn("text-lg font-bold", !textColor ? "text-foreground/80" : "drop-shadow-sm")}>
               {listId === 'all' ? t('noTasksAll') as string : listId === 'important' ? t('noTasksImportant') as string : t('noTasks') as string}
             </p>
+            {listId === 'all' && (
+              <p className={cn("text-sm mt-2", !textColor ? "text-muted-foreground" : "opacity-80")}>{t('subtitleAll') as string}</p>
+            )}
+            {listId === 'important' && (
+              <p className={cn("text-sm mt-2", !textColor ? "text-muted-foreground" : "opacity-80")}>{t('subtitleImportant') as string}</p>
+            )}
           </div>
         )}
       </div>
