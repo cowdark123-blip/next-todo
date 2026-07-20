@@ -30,8 +30,8 @@ export function PipContainer({ children }: { children: React.ReactNode }) {
 
   if (pipWindow) {
     return createPortal(
-      <div className="h-screen w-screen overflow-hidden bg-background min-w-[300px] min-h-[350px]">
-        <main className="h-full overflow-y-auto">
+      <div className="w-[300px] h-[350px] overflow-hidden bg-background shrink-0 relative flex flex-col">
+        <main className="flex-1 overflow-y-auto">
           {children}
         </main>
       </div>,
@@ -95,7 +95,7 @@ export function MiniModeButton() {
 
       // Copy theme classes
       pipWin.document.documentElement.className = document.documentElement.className;
-      pipWin.document.body.className = document.body.className + ' is-pip-mode';
+      pipWin.document.body.className = document.body.className + ' is-pip-mode flex items-center justify-center bg-black overflow-hidden m-0 w-screen h-screen';
 
       pipWindowCache = pipWin;
       setPipMode(true);
