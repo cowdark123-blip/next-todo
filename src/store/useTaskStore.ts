@@ -25,6 +25,10 @@ interface TaskState {
   toggleTaskImportance: (id: string) => void;
   reorderTasks: (activeId: string, overId: string) => void;
   moveTask: (taskId: string, newListId: string) => void;
+  
+  // Sync Actions
+  syncWithBackend: () => Promise<void>;
+  setFromBackend: (data: { lists: TodoList[], tasks: Task[] }) => void;
 }
 
 export const useTaskStore = create<TaskState>()(
@@ -39,31 +43,40 @@ export const useTaskStore = create<TaskState>()(
         unfinished: '#dc2626',
       },
 
-      addList: (name, icon, color) => set((state) => ({
-        lists: [
-          ...state.lists,
-          {
-            id: crypto.randomUUID(),
-            name,
-            icon,
-            color,
-            bgOpacity: 1,
-            createdAt: new Date().toISOString(),
-          },
-        ],
-      })),
+      addList: (name, icon, color) => {
+        set((state) => ({
+          lists: [
+            ...state.lists,
+            {
+              id: crypto.randomUUID(),
+              name,
+              icon,
+              color,
+              bgOpacity: 1,
+              createdAt: new Date().toISOString(),
+            },
+          ],
+        }));
+        get().syncWithBackend();
+      },
 
-      updateList: (id, updates) => set((state) => ({
-        lists: state.lists.map((list) =>
-          list.id === id ? { ...list, ...updates } : list
-        ),
-      })),
+      updateList: (id, updates) => {
+        set((state) => ({
+          lists: state.lists.map((list) =>
+            list.id === id ? { ...list, ...updates } : list
+          ),
+        }));
+        get().syncWithBackend();
+      },
 
-      updateListSettings: (id, settings) => set((state) => ({
-        lists: state.lists.map((list) =>
-          list.id === id ? { ...list, ...settings } : list
-        ),
-      })),
+      updateListSettings: (id, settings) => {
+        set((state) => ({
+          lists: state.lists.map((list) =>
+            list.id === id ? { ...list, ...settings } : list
+          ),
+        }));
+        get().syncWithBackend();
+      },
 
       updateSpecialListSettings: (id, settings) => set((state) => ({
         specialListSettings: {
@@ -72,79 +85,165 @@ export const useTaskStore = create<TaskState>()(
         },
       })),
 
-      deleteList: (id) => set((state) => ({
-        lists: state.lists.filter((list) => list.id !== id),
-        tasks: state.tasks.filter((task) => task.listId !== id),
-      })),
+      deleteList: (id) => {
+        set((state) => ({
+          lists: state.lists.filter((list) => list.id !== id),
+          tasks: state.tasks.filter((task) => task.listId !== id),
+        }));
+        get().syncWithBackend();
+      },
 
       updateStatusColors: (colors) => set((state) => ({
         statusColors: { ...state.statusColors, ...colors },
       })),
 
-      addTask: (listId, title, parentId) => set((state) => ({
-        tasks: [
-          {
-            id: crypto.randomUUID(),
-            listId,
-            parentId,
-            title,
-            status: 'unfinished',
-            isImportant: false,
-            createdAt: new Date().toISOString(),
-          },
-          ...state.tasks,
-        ],
+      addTask: (listId, title, parentId) => {
+        set((state) => ({
+          tasks: [
+            {
+              id: crypto.randomUUID(),
+              listId,
+              parentId,
+              title,
+              status: 'unfinished',
+              isImportant: false,
+              createdAt: new Date().toISOString(),
+            },
+            ...state.tasks,
+          ],
+        }));
+        get().syncWithBackend();
+      },
+
+      updateTask: (id, updates) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, ...updates } : task
+          ),
+        }));
+        get().syncWithBackend();
+      },
+
+      deleteTask: (id) => {
+        set((state) => ({
+          tasks: state.tasks.filter((task) => task.id !== id && task.parentId !== id),
+        }));
+        get().syncWithBackend();
+      },
+
+      updateTaskStatus: (id, status) => {
+        set((state) => {
+          const isDone = status === 'done';
+          return {
+            tasks: state.tasks.map((task) => {
+              if (task.id === id) {
+                return { ...task, status, completed: isDone };
+              }
+              if (isDone && task.parentId === id) {
+                return { ...task, status: 'done', completed: true };
+              }
+              return task;
+            }),
+          };
+        });
+        get().syncWithBackend();
+      },
+
+      toggleTaskImportance: (id) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === id ? { ...task, isImportant: !task.isImportant } : task
+          ),
+        }));
+        get().syncWithBackend();
+      },
+
+      reorderTasks: (activeId, overId) => {
+        set((state) => {
+          const oldIndex = state.tasks.findIndex((t) => t.id === activeId);
+          const newIndex = state.tasks.findIndex((t) => t.id === overId);
+
+          if (oldIndex !== -1 && newIndex !== -1) {
+            const newTasks = [...state.tasks];
+            const [removed] = newTasks.splice(oldIndex, 1);
+            newTasks.splice(newIndex, 0, removed);
+            return { tasks: newTasks };
+          }
+          return state;
+        });
+        get().syncWithBackend();
+      },
+
+      moveTask: (taskId, newListId) => {
+        set((state) => ({
+          tasks: state.tasks.map((task) =>
+            task.id === taskId || task.parentId === taskId ? { ...task, listId: newListId } : task
+          ),
+        }));
+        get().syncWithBackend();
+      },
+
+      setFromBackend: (data) => set(() => ({
+        lists: data.lists.map((l: any) => ({
+          id: l.id,
+          name: l.name,
+          icon: l.icon || undefined,
+          color: l.text_color || undefined,
+          bgOpacity: l.bg_opacity || 1,
+          createdAt: l.created_at
+        })),
+        tasks: data.tasks.map((t: any) => ({
+          id: t.id,
+          listId: t.list_id,
+          parentId: undefined, // Backend doesn't support subtasks yet, simplify
+          title: t.title,
+          status: t.status,
+          completed: t.status === 'done',
+          isImportant: t.important,
+          createdAt: t.created_at,
+          notes: t.notes || ''
+        }))
       })),
 
-      updateTask: (id, updates) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === id ? { ...task, ...updates } : task
-        ),
-      })),
+      syncWithBackend: async () => {
+        // Debounce logic could go here, but for simplicity we fire and forget
+        const { session } = require('@/lib/useAuthStore').useAuthStore.getState();
+        if (!session) return; // Only sync if logged in
 
-      deleteTask: (id) => set((state) => ({
-        tasks: state.tasks.filter((task) => task.id !== id && task.parentId !== id),
-      })),
-
-      updateTaskStatus: (id, status) => set((state) => {
-        const isDone = status === 'done';
-        return {
-          tasks: state.tasks.map((task) => {
-            if (task.id === id) {
-              return { ...task, status, completed: isDone };
-            }
-            if (isDone && task.parentId === id) {
-              return { ...task, status: 'done', completed: true };
-            }
-            return task;
-          }),
-        };
-      }),
-
-      toggleTaskImportance: (id) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === id ? { ...task, isImportant: !task.isImportant } : task
-        ),
-      })),
-
-      reorderTasks: (activeId, overId) => set((state) => {
-        const oldIndex = state.tasks.findIndex((t) => t.id === activeId);
-        const newIndex = state.tasks.findIndex((t) => t.id === overId);
-
-        if (oldIndex !== -1 && newIndex !== -1) {
-          const newTasks = [...state.tasks];
-          const [removed] = newTasks.splice(oldIndex, 1);
-          newTasks.splice(newIndex, 0, removed);
-          return { tasks: newTasks };
+        const state = get();
+        try {
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+          const res = await fetch(`${API_URL}/sync`, {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({
+              lists: state.lists.map(l => ({
+                id: l.id,
+                name: l.name,
+                icon: l.icon,
+                bg_opacity: l.bgOpacity,
+                text_color: l.color,
+                created_at: l.createdAt
+              })),
+              tasks: state.tasks.map(t => ({
+                id: t.id,
+                list_id: t.listId,
+                title: t.title,
+                notes: t.notes,
+                status: t.status,
+                important: t.isImportant,
+                created_at: t.createdAt
+              }))
+            })
+          });
+          if (!res.ok) console.error('Failed to sync with backend');
+        } catch (e) {
+          console.error('Error syncing:', e);
         }
-        return state;
-      }),
-
-      moveTask: (taskId, newListId) => set((state) => ({
-        tasks: state.tasks.map((task) =>
-          task.id === taskId || task.parentId === taskId ? { ...task, listId: newListId } : task
-        ),
-      })),
+      }
     }),
     {
       name: 'next-todo-storage',
