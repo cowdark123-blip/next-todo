@@ -436,6 +436,16 @@ export function Sidebar() {
                   </summary>
                   <div className="px-3 py-2 space-y-2 bg-muted/30 rounded-lg mt-1 mx-1 border border-border/50">
                     <p className="text-xs text-muted-foreground truncate" title={profile?.email}>{profile?.email}</p>
+                    
+                    <Link
+                      href="/profile"
+                      className="w-full flex items-center text-sm text-muted-foreground hover:text-primary hover:bg-primary/10 h-8 px-2 rounded-md transition-colors"
+                      onClick={() => window.innerWidth < 768 && setSidebarOpen(false)}
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Edit Profile
+                    </Link>
+
                     <Button
                       variant="ghost"
                       size="sm"

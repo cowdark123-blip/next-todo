@@ -83,7 +83,11 @@ export const useAuthStore = create<AuthState>((set) => ({
 }));
 
 async function verifySessionWithBackend(session: Session) {
-  useAuthStore.setState({ isLoading: true });
+  const isFirstLoad = !useAuthStore.getState().profile;
+  if (isFirstLoad) {
+    useAuthStore.setState({ isLoading: true });
+  }
+
   try {
     const res = await fetch(`${API_URL}/auth/google`, {
       method: 'POST',
@@ -95,15 +99,15 @@ async function verifySessionWithBackend(session: Session) {
       const data = await res.json();
       useAuthStore.setState({ session, profile: data.profile, isLoading: false });
       
-      // Fetch initial sync data
-      const syncRes = await fetch(`${API_URL}/sync`, {
-        headers: { 'Authorization': `Bearer ${session.access_token}` }
-      });
-      if (syncRes.ok) {
-        const syncData = await syncRes.json();
-        // Upload local data and fetch merged (for simplicity, just set from backend and let it push on next mutate, or push immediately if local exists)
-        // Since we are forcing login, local data might just be defaults. We can just set it.
-        require('@/store/useTaskStore').useTaskStore.getState().setFromBackend(syncData);
+      if (isFirstLoad) {
+        // Fetch initial sync data
+        const syncRes = await fetch(`${API_URL}/sync`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        });
+        if (syncRes.ok) {
+          const syncData = await syncRes.json();
+          require('@/store/useTaskStore').useTaskStore.getState().setFromBackend(syncData);
+        }
       }
     } else {
       console.error('Failed to verify session with backend');
