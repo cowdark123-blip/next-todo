@@ -30,7 +30,7 @@ export function PipContainer({ children }: { children: React.ReactNode }) {
 
   if (pipWindow) {
     return createPortal(
-      <div className="w-[300px] h-[350px] overflow-hidden bg-background shrink-0 relative flex flex-col">
+      <div className="w-full h-full overflow-hidden bg-background shrink-0 relative flex flex-col">
         <main className="flex-1 overflow-y-auto">
           {children}
         </main>
@@ -65,12 +65,9 @@ export function MiniModeButton() {
     }
 
     try {
-      const FIXED_WIDTH = 300;
-      const FIXED_HEIGHT = 350;
-
       const pipWin = await window.documentPictureInPicture!.requestWindow({
-        width: FIXED_WIDTH,
-        height: FIXED_HEIGHT,
+        width: 300,
+        height: 350,
       });
 
       // Copy all styles
@@ -99,15 +96,6 @@ export function MiniModeButton() {
 
       pipWindowCache = pipWin;
       setPipMode(true);
-
-      // Lock to fixed 300x350 — snap back immediately on any resize attempt
-      pipWin.addEventListener('resize', () => {
-        try {
-          pipWin.resizeTo(FIXED_WIDTH, FIXED_HEIGHT);
-        } catch (e) {
-          // Browser might block resizeTo
-        }
-      });
 
       pipWin.addEventListener('pagehide', () => {
         pipWindowCache = null;
