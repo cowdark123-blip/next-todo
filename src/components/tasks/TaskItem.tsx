@@ -92,7 +92,7 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
         style={{ borderColor: statusColors?.[task.status] || 'transparent' }}
         onClick={() => setActiveTask(task.id)}
         className={cn(
-          "group flex flex-wrap items-center gap-2 [.is-pip-mode_&]:gap-1 transition-colors cursor-pointer select-none overflow-hidden",
+          "group grid grid-cols-[auto_minmax(0,1fr)_auto] gap-2 [.is-pip-mode_&]:gap-1 items-center transition-colors cursor-pointer select-none overflow-hidden",
           isSubtask
             ? "p-2 ml-4 mb-1 text-sm border-l-4 border-l-primary/60 rounded bg-muted/30 hover:bg-muted/50"
             : "p-3 [.is-pip-mode_&]:p-1.5 rounded-xl border-2 hover:border-primary transition-colors hover:shadow-sm",
@@ -100,42 +100,44 @@ export function TaskItem({ task, isSubtask }: TaskItemProps) {
           task.status === 'done' ? "bg-muted text-muted-foreground border-transparent" : "bg-card border-border"
         )}
       >
-        {!isSubtask && (
-          <button
-            {...attributes}
-            {...listeners}
-            onClick={(e) => e.stopPropagation()}
-            className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-1 -ml-1 [.is-pip-mode_&]:hidden"
-          >
-            <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
-        )}
+        <div className="flex items-center gap-1 shrink-0">
+          {!isSubtask && (
+            <button
+              {...attributes}
+              {...listeners}
+              onClick={(e) => e.stopPropagation()}
+              className="text-muted-foreground hover:text-foreground cursor-grab active:cursor-grabbing p-1 -ml-1 [.is-pip-mode_&]:hidden"
+            >
+              <GripVertical className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </button>
+          )}
 
-        <div className="flex items-center gap-1 shrink-0 bg-muted/50 p-1 rounded-lg border border-transparent mr-1">
-          <button
-            onClick={(e) => handleStatusChange(e, 'unfinished')}
-            className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
-            title="Unfinished"
-          >
-            <Circle className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
-          </button>
-          <button
-            onClick={(e) => handleStatusChange(e, 'in_progress')}
-            className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'in_progress' ? "bg-blue-500/20 text-blue-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
-            title="In Progress"
-          >
-            <Play className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
-          </button>
-          <button
-            onClick={(e) => handleStatusChange(e, 'done')}
-            className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'done' ? "bg-green-500/20 text-green-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
-            title="Done"
-          >
-            <Check className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
-          </button>
+          <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg border border-transparent mr-1">
+            <button
+              onClick={(e) => handleStatusChange(e, 'unfinished')}
+              className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'unfinished' ? "bg-red-500/20 text-red-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+              title="Unfinished"
+            >
+              <Circle className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
+            </button>
+            <button
+              onClick={(e) => handleStatusChange(e, 'in_progress')}
+              className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'in_progress' ? "bg-blue-500/20 text-blue-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+              title="In Progress"
+            >
+              <Play className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
+            </button>
+            <button
+              onClick={(e) => handleStatusChange(e, 'done')}
+              className={cn("rounded flex items-center justify-center transition-colors [.is-pip-mode_&]:w-5 [.is-pip-mode_&]:h-5", isSubtask ? "w-6 h-6 md:w-5 md:h-5" : "w-8 h-8 md:w-6 md:h-6", task.status === 'done' ? "bg-green-500/20 text-green-500" : "text-muted-foreground hover:bg-muted hover:text-foreground")}
+              title="Done"
+            >
+              <Check className={cn(isSubtask ? "w-3.5 h-3.5 md:w-3 md:h-3" : "w-4 h-4 md:w-3.5 md:h-3.5", "[.is-pip-mode_&]:w-3 [.is-pip-mode_&]:h-3")} />
+            </button>
+          </div>
         </div>
 
-        <div className="flex-1 min-w-[100px] flex flex-wrap items-center gap-2">
+        <div className="min-w-0 w-full flex flex-wrap items-center gap-2">
           {task.icon && task.status !== 'done' && (
             <span className="text-base flex-shrink-0 leading-none">{task.icon}</span>
           )}
