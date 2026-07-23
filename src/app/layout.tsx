@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: 'Next-Gen Task Manager',
   description: 'A modern, beautiful task management app',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/icon-192.png',
+    apple: '/apple-touch-icon.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
