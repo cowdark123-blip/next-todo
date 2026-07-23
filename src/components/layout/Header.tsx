@@ -26,12 +26,25 @@ export function Header() {
       <div className="flex-1" />
 
       {/* PWA Install Button */}
-      {!isInstalled && (
+      {isInstallable && !isInstalled && (
         <Button
           variant="outline"
           size="sm"
           onClick={installApp}
-          className="h-8 gap-1.5 text-xs font-semibold border-primary/40 text-primary hover:bg-primary/10 transition-colors shadow-sm"
+          className="h-8 gap-1.5 text-xs font-semibold border-primary/40 text-primary hover:bg-primary/10 transition-colors shadow-sm animate-pulse"
+          title={t('installApp')}
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">{t('installApp')}</span>
+        </Button>
+      )}
+
+      {!isInstallable && !isInstalled && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={installApp}
+          className="h-8 gap-1.5 text-xs font-semibold border-primary/30 text-primary/80 hover:bg-primary/10 transition-colors shadow-sm"
           title={t('installApp')}
         >
           <Download className="h-3.5 w-3.5" />
