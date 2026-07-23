@@ -8,21 +8,30 @@ import { Loader2 } from 'lucide-react';
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const pathname = usePathname();
-  const { session, isLoading } = useAuthStore();
+  const { session, isGuest, isLoading } = useAuthStore();
 
   useEffect(() => {
     useAuthStore.getState().initialize();
+
+    // Register Service Worker for PWA support
+    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch((err) => {
+        console.log('SW registration failed:', err);
+      });
+    }
   }, []);
+
+  const isAuthenticated = Boolean(session || isGuest);
 
   useEffect(() => {
     if (!isLoading) {
-      if (!session && pathname !== '/login') {
+      if (!isAuthenticated && pathname !== '/login') {
         router.push('/login');
-      } else if (session && pathname === '/login') {
+      } else if (isAuthenticated && pathname === '/login') {
         router.push('/list/all');
       }
     }
-  }, [session, isLoading, pathname, router]);
+  }, [isAuthenticated, isLoading, pathname, router]);
 
   if (isLoading) {
     return (
@@ -33,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   // Prevent flashing protected content before redirecting
-  if (!session && pathname !== '/login') {
+  if (!isAuthenticated && pathname !== '/login') {
     return null; 
   }
 

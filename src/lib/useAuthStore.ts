@@ -12,8 +12,10 @@ interface UserProfile {
 interface AuthState {
   session: Session | null;
   profile: UserProfile | null;
+  isGuest: boolean;
   isLoading: boolean;
   loginWithGoogle: () => Promise<void>;
+  continueAsGuest: () => void;
   logout: () => Promise<void>;
   initialize: () => void;
   updateProfile: (updates: { full_name?: string; avatar_url?: string }) => Promise<void>;
@@ -21,12 +23,23 @@ interface AuthState {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+const GUEST_PROFILE: UserProfile = {
+  id: 'guest',
+  full_name: 'Khách (Guest)',
+  avatar_url: '',
+  email: 'guest@local',
+};
+
 export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   profile: null,
+  isGuest: false,
   isLoading: true,
 
   loginWithGoogle: async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('next_todo_guest_mode');
+    }
     await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -35,9 +48,24 @@ export const useAuthStore = create<AuthState>((set) => ({
     });
   },
 
+  continueAsGuest: () => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('next_todo_guest_mode', 'true');
+    }
+    set({
+      isGuest: true,
+      session: null,
+      profile: GUEST_PROFILE,
+      isLoading: false,
+    });
+  },
+
   logout: async () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('next_todo_guest_mode');
+    }
     await supabase.auth.signOut();
-    set({ session: null, profile: null });
+    set({ session: null, profile: null, isGuest: false });
   },
 
   initialize: () => {
@@ -45,10 +73,23 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (state._initialized) return;
     useAuthStore.setState({ _initialized: true } as any);
 
+    // Check if guest mode was enabled previously
+    const storedGuest = typeof window !== 'undefined' && localStorage.getItem('next_todo_guest_mode') === 'true';
+
     // Check active sessions and sets up a listener
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('next_todo_guest_mode');
+        }
         verifySessionWithBackend(session);
+      } else if (storedGuest) {
+        set({
+          isGuest: true,
+          session: null,
+          profile: GUEST_PROFILE,
+          isLoading: false,
+        });
       } else {
         set({ isLoading: false });
       }
@@ -57,14 +98,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'INITIAL_SESSION') return;
       if (session) {
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem('next_todo_guest_mode');
+        }
         if (event === 'SIGNED_IN') {
           verifySessionWithBackend(session);
         } else {
           // For TOKEN_REFRESHED, USER_UPDATED, etc, just update the session object silently
-          set({ session });
+          set({ session, isGuest: false });
         }
       } else {
-        set({ session: null, profile: null, isLoading: false });
+        const stillGuest = typeof window !== 'undefined' && localStorage.getItem('next_todo_guest_mode') === 'true';
+        if (stillGuest) {
+          set({ isGuest: true, session: null, profile: GUEST_PROFILE, isLoading: false });
+        } else {
+          set({ session: null, profile: null, isGuest: false, isLoading: false });
+        }
       }
     });
   },

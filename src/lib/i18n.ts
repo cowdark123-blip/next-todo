@@ -72,6 +72,10 @@ export const translations = {
     cannotBeUndone: 'This action cannot be undone. This will permanently delete the list and all of its tasks.',
     cancel: 'Cancel',
     yesDelete: 'Yes, delete list',
+    continueAsGuest: 'Continue as Guest',
+    guestMode: 'Guest Mode',
+    installApp: 'Install App',
+    appInstalled: 'App Installed',
   },
   vi: {
     // General
@@ -144,6 +148,10 @@ export const translations = {
     cannotBeUndone: 'Hành động này không thể hoàn tác. Danh sách và mọi công việc bên trong sẽ bị xóa vĩnh viễn.',
     cancel: 'Hủy',
     yesDelete: 'Có, xóa danh sách',
+    continueAsGuest: 'Tiếp tục dưới dạng Khách',
+    guestMode: 'Chế độ Khách',
+    installApp: 'Cài đặt ứng dụng',
+    appInstalled: 'Đã cài đặt ứng dụng',
   }
 };
 

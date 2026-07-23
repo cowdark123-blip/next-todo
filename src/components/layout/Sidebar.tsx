@@ -177,7 +177,7 @@ export function Sidebar() {
   const t = useTranslation();
   const { theme, setTheme, themes } = useTheme();
   const pathname = usePathname();
-  const { session, profile, loginWithGoogle, logout } = useAuthStore();
+  const { session, profile, isGuest, loginWithGoogle, logout } = useAuthStore();
 
   const [newListName, setNewListName] = useState('');
   const [isAddingList, setIsAddingList] = useState(false);
@@ -490,6 +490,41 @@ export function Sidebar() {
                       variant="ghost"
                       size="sm"
                       className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 h-8 px-2"
+                      onClick={() => logout()}
+                    >
+                      <LogOut className="w-4 h-4 mr-2" />
+                      {t('logout')}
+                    </Button>
+                  </div>
+                </details>
+              ) : isGuest ? (
+                <details className="group mt-2">
+                  <summary className="flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-md text-foreground/80 hover:text-foreground hover:bg-muted cursor-pointer transition-colors outline-none list-none [&::-webkit-details-marker]:hidden">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center text-[10px] font-bold ring-1 ring-amber-500/30">
+                        👤
+                      </div>
+                      <span className="truncate max-w-[120px] font-medium">{t('guestMode')}</span>
+                    </div>
+                    <svg className="w-4 h-4 transition-transform group-open:-scale-y-100 opacity-70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                  </summary>
+                  <div className="px-3 py-2 space-y-2 bg-muted/50 rounded-lg mt-1 mx-1 border-2 border-border">
+                    <p className="text-xs text-muted-foreground">{t('guestMode')}</p>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-primary hover:bg-primary/10 h-8 px-2"
+                      onClick={() => loginWithGoogle()}
+                    >
+                      <LogIn className="w-4 h-4 mr-2" />
+                      {t('login')}
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-8 px-2"
                       onClick={() => logout()}
                     >
                       <LogOut className="w-4 h-4 mr-2" />

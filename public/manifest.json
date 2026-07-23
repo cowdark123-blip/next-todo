@@ -1,16 +1,19 @@
 {
   "name": "Next-Gen Task Manager",
   "short_name": "Next To-Do",
-  "description": "A modern, beautiful task management app",
-  "start_url": "/",
+  "description": "A modern, beautiful task management web application",
+  "start_url": "/list/all",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "background_color": "#1c1c1e",
+  "theme_color": "#1c1c1e",
   "icons": [
     {
       "src": "/favicon.ico",
       "sizes": "64x64",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any maskable"
     }
   ]
 }
